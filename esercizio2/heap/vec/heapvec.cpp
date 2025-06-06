@@ -1,31 +1,30 @@
-
 namespace lasd {
 
 /* ************************************************************************** */
 
 // Constructors
 template <typename Data>
-lasd::HeapVec<Data>::HeapVec(const TraversableContainer<Data>& container) : Vector<Data>(container) {
+lasd::HeapVec<Data>::HeapVec(const TraversableContainer<Data>& container) : SortableVector<Data>(container) {
   Heapify();  // Trasforma il vettore in un MaxHeap
 }
 
 
 template <typename Data>
-lasd::HeapVec<Data>::HeapVec(MappableContainer<Data>&& container) : Vector<Data>(std::move(container)) {
+lasd::HeapVec<Data>::HeapVec(MappableContainer<Data>&& container) : SortableVector<Data>(std::move(container)) {
   Heapify();  // Trasforma il vettore in un MaxHeap
 }
 
 
 
 template <typename Data>
-lasd::HeapVec<Data>::HeapVec(const HeapVec<Data>& other) : Vector<Data>(other) {
+lasd::HeapVec<Data>::HeapVec(const HeapVec<Data>& other) : SortableVector<Data>(other) {
 }
 
 /* ************************************************************************** */
 
 template <typename Data>
 lasd::HeapVec<Data>::HeapVec(HeapVec<Data>&& other)
-  : Vector<Data>(std::move(other))  // Muovi il Vector base
+  : SortableVector<Data>(std::move(other))  // Muovi il Vector base
 {
 }
 
@@ -119,6 +118,8 @@ template <typename Data>
 ulong lasd::HeapVec<Data>::Parent(ulong i) const noexcept {
   return (i - 1) / 2;
 }
+
+
 template <typename Data>
 void lasd::HeapVec<Data>::Sort() {
   Heapify(); // Costruisce il maxHeap iniziale
@@ -127,17 +128,19 @@ void lasd::HeapVec<Data>::Sort() {
     std::swap(this->elem[0], this->elem[i]); // porta il max in fondo
 
     // Ricostruisce il maxHeap su [0, i-1]
-    ulong index = 0;
+    long index = 0;
     bool heapOk = false;
 
+    //Heapify modificata per mettere di ordinare da un punto a un punto , la mia non lo fa ma lo fa per tutto l'array
+    // quindi la modifico per farlo
     while (!heapOk) {
-      ulong largest = index;
-      ulong left = LeftChild(index);
-      ulong right = RightChild(index);
+      long largest = index;
+      long left = LeftChild(index);
+      long right = RightChild(index);
 
-      if (left < static_cast<ulong>(i) && this->elem[left] > this->elem[largest])
+      if (left < i && this->elem[left] > this->elem[largest])
         largest = left;
-      if (right < static_cast<ulong>(i) && this->elem[right] > this->elem[largest])
+      if (right < i && this->elem[right] > this->elem[largest])
         largest = right;
 
       if (largest != index) {
@@ -151,21 +154,6 @@ void lasd::HeapVec<Data>::Sort() {
 }
 
 
-template <typename Data>
-const Data& lasd::HeapVec<Data>::operator[](ulong index) const {
-  if (index >= this->size) {
-    throw std::out_of_range("Index out of range");
-  }
-  return this->elem[index];
-}
-
-template <typename Data>
-Data& lasd::HeapVec<Data>::operator[](ulong index) {
-  if (index >= this->size) {
-    throw std::out_of_range("Index out of range");
-  }
-  return this->elem[index];
-}
 
 
 template <typename Data>

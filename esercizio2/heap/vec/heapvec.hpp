@@ -15,9 +15,9 @@ namespace lasd {
 
 template <typename Data>
 class HeapVec : virtual public Heap<Data>,
-                public Vector<Data> {
+                protected SortableVector<Data> {
   // Must extend Heap<Data>,
-  // Could extend SortableVector<Data>
+  // Could extend Vector<Data>
 
 private:
 
@@ -27,11 +27,32 @@ protected:
 
   using Container::size;
   using Vector<Data>::elem;
+  using SortableVector<Data>::operator[]; // Access to the elements of the vector
+  using SortableVector<Data>::Back;
+  using SortableVector<Data>::Front;
+
   
+ 
   
+ 
+
   // ...
 
 public:
+  // Using Vector<Data> member functions
+    using SortableVector<Data>::SortableVector; // Inherit constructors from SortableVector<Data>
+    inline const Data& operator[](const ulong i) const {
+      return SortableVector<Data>::operator[](i); // Access to the elements of the vector
+    }
+    using Vector<Data>::Resize; // Resize the vector (inherited from ResizableContainer)
+    inline const Data& Front() const override {
+      return SortableVector<Data>::Front(); // Access to the first element of the vector
+    }
+    inline const Data& Back() const override{
+      return SortableVector<Data>::Back(); // Access to the last element of the vector
+    }
+
+  /* ************************************************************************ */
 
   // Default constructor
   HeapVec() = default;
@@ -83,7 +104,6 @@ public:
 
   void Sort(); 
 
-  const Data& operator[](ulong i) const override; // Access to the vector elements (non-mutable version)
   void Clear() noexcept override; // Clear the vector (inherited from ClearableContainer)
 
 protected:
@@ -91,7 +111,7 @@ protected:
   ulong RightChild(ulong) const noexcept; // returns the index of the right child (2i+2)
   ulong Parent(ulong) const noexcept; // returns the index of the parent (i-1)/2
   void Heapify(ulong) noexcept; // heapify the vector starting from the given index
-  Data& operator[](ulong i) override; // Access to the vector elements (mutable version)
+  
 
   // Auxiliary functions, if necessary!
 

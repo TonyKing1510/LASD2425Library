@@ -157,7 +157,6 @@ private:
 protected:
 
   using Container::size; // Number of elements in the container
-  using MutableLinearContainer<Data>::operator[]; // (inherited from MutableLinearContainer)
 
 public:
 

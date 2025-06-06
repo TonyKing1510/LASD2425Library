@@ -13,6 +13,8 @@
 #include "../zlasdtest/list/list.hpp"
 #include "../zlasdtest/set/set.hpp"
 #include "../zlasdtest/heap/heap.hpp"
+#include "../zlasdtest/pq/pq.hpp"
+
 
 #include <string>
 #include <random>
@@ -22,6 +24,9 @@
 /* ************************************************************************** */
 
 #include <iostream>
+#include "../heap/vec/heapvec.hpp"
+#include "../pq/heap/pqheap.hpp"
+#include "../zmytest/test.hpp"
 
 using namespace lasd;
 using namespace std;
@@ -134,1482 +139,460 @@ void InsertAtFrontMove(uint & testnum, uint & testerr, lasd::List<Data> & lst, b
   testerr += (1 - (uint) tst);
 }
 
-
-
-  /* ************************************************************************** */
-  void testVectorInt(unsigned &testnum, unsigned &testerr)
-{
-    unsigned loctestnum = 0, loctesterr = 0;
-    cout << endl
-         << "Begin of Vector<int> Test:" << endl;
-    try
-    {
-        lasd::Vector<int> v1(10);
-        lasd::Vector<int> v2(10);
-
-        NonEqualVector(loctestnum, loctesterr, v1, v2, false);
-        SetFront(loctestnum, loctesterr, v1, true, 90000);
-        SetAt(loctestnum, loctesterr, v2, true, 0, 2);
-        v1.Resize(4);
-        v2.Resize(4);
-        EqualVector(loctestnum, loctesterr, v1, v2, false);
-        v1.Clear();
-        v2.Clear();
-        Size(loctestnum, loctesterr, v1, true, 0);
-        Size(loctestnum, loctesterr, v2, true, 0);
-        v1.Resize(5);
-        v2.Resize(5);
-        SetAt(loctestnum, loctesterr, v1,  true, 0, 2);
-        SetAt(loctestnum, loctesterr, v2,  true, 0, 2);
-        EqualVector(loctestnum, loctesterr, v1, v2, true);
-
-        v1.Clear();
-        v2.Clear();
-        v1.Resize(5);
-        v2.Resize(5);
-
-        for(int i = 0; i < 5; i++)
-        {
-            int n1 = generateRandomInt();
-            SetAt(loctestnum, loctesterr, v1, true, i, n1);
-            int n2 = generateRandomInt();
-            SetAt(loctestnum, loctesterr, v2, true, i, n2);
-        };
-
-        cout<<"Funzionamento operator []"<<endl;
-        for(int i = 0; i < 5; i++){
-            cout<< v1[i] << "-";
-        };
-        cout<<" "<<endl;
-
-        EqualVector(loctestnum, loctesterr, v1, v2, false);
-        v1 = v2;
-        EqualVector(loctestnum, loctesterr, v1, v2, true);
-
-        
-
-
-        lasd::SortableVector<int> sortv1(std::move(v1));
-        int n1 = generateRandomInt();
-        Empty(loctestnum, loctesterr, v1, false);
-        Size(loctestnum, loctesterr, v1, false, 0);
-        v1.Clear();
-        Empty(loctestnum, loctesterr, v1, true);
-        Size(loctestnum, loctesterr, v1, true, 0);
-        n1 = generateRandomInt();
-        SetBack(loctestnum, loctesterr, v1, false, n1);
-        EqualVector(loctestnum, loctesterr, sortv1, v2, true);
-        SetBack(loctestnum, loctesterr, sortv1, true, 2);
-        n1 = generateRandomInt();
-        SetAt(loctestnum, loctesterr, sortv1, true, 1, n1);
-        GetBack(loctestnum, loctesterr, sortv1, true, 2);
-        GetAt(loctestnum, loctesterr, sortv1, false, 7, 0);
-        
-  
-        sortv1.Sort();
-        TraversePreOrder(loctestnum, loctesterr, sortv1, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, sortv1, true, &MapDouble<int>);
-        TraversePreOrder(loctestnum, loctesterr, sortv1, true, &TraversePrint<int>);
-
-        lasd::SortableVector<int> sortv2(sortv1);
-        sortv2.Resize(7);
-        SetAt(loctestnum, loctesterr, sortv2, true, 4, 145);
-        SetBack(loctestnum, loctesterr, sortv2, true, -1120);
-
-        EqualVector(loctestnum, loctesterr, v2, sortv1, false);
-        v2 = sortv1;
-        EqualVector(loctestnum, loctesterr, v2, sortv1, true);
-        v2.Resize(10);
-    
-  
-        Map(loctestnum, loctesterr, v2, true, &MapIncrement<int>);
-        TraversePreOrder(loctestnum, loctesterr, v2, true, &TraversePrint<int>);
-        TraversePostOrder(loctestnum, loctesterr, v2, true, &TraversePrint<int>);
-
-        v2.Clear();
-        Size(loctestnum, loctesterr, v2, true, 0);
-        SetFront(loctestnum, loctesterr, v2, false, 123);
-        MapPostOrder(loctestnum, loctesterr, v2, true, &MapDecrement<int>);
-        v2.Resize(10);
-        for(int i = 0; i < 10; i++)
-        {
-            SetAt(loctestnum, loctesterr, v2, true, i, generateRandomInt());
-        }
-      
-        lasd::SortableVector<int> sv3(std::move(v2));
-        sv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, sv3, true, &TraversePrint<int>);
-        EqualVector(loctestnum, loctesterr, sv3, sortv1, false);
-
-        sv3.Clear();
-        sv3.Sort();
-        Empty(loctestnum, loctesterr, sv3, true);
-        Size(loctestnum, loctesterr, sv3, true, 0);
-
-
-
-        //test con vettore vuoto 
-        lasd::SortableVector<int> stv3;
-        Empty(loctestnum, loctesterr, stv3, true);
-        Size(loctestnum, loctesterr, stv3, true, 0);
-        stv3.Resize(0);
-        Empty(loctestnum, loctesterr, stv3, true);
-        Size(loctestnum, loctesterr, stv3, true, 0);
-        stv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<int>);
-        TraversePostOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, stv3, true, &MapDouble<int>);
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<int>);
-        stv3.Clear();
-        GetAt(loctestnum, loctesterr, stv3, false, 0, 1);
-        GetFront(loctestnum, loctesterr, stv3, false, 1);
-        GetBack(loctestnum, loctesterr, stv3, false, 1);
-        stv3.Resize(4);
-        Size(loctestnum, loctesterr, stv3, true, 4);
-        
-        lasd::Vector<int> v4(4);
-        Empty(loctestnum, loctesterr, v4, false);
-        for(int i = 0; i < 4; i++)
-        {
-            SetAt(loctestnum, loctesterr, v4, true, i, generateRandomInt());
-        }
-        stv3 = v4;
-        EqualVector(loctestnum, loctesterr, stv3, v4, true);
-        stv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, stv3, true, &MapDouble<int>);
-        NonEqualVector(loctestnum, loctesterr, stv3, v4, true);
-
-        v4.Resize(7);
-        stv3.Resize(7);
-
-        for(int i = 0; i < 7; i++)
-        {
-            SetAt(loctestnum, loctesterr, v4, true, i, generateRandomInt());
-        }
-
-        stv3 = move(v4);
-        EqualVector(loctestnum, loctesterr, stv3, v4, true);
-        stv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, stv3, true, &MapDouble<int>);
-        NonEqualVector(loctestnum, loctesterr, stv3, v4, true);
-        v4.Clear();
-        Size(loctestnum, loctesterr, v4, true, 0);
-        Empty(loctestnum, loctesterr, v4, true);
-        v4.Resize(0);
-        Size(loctestnum, loctesterr, v4, true, 0);
-        Empty(loctestnum, loctesterr, v4, true);
-
-
-        lasd::SortableVector<int> stv1(1);
-        SetAt(loctestnum, loctesterr, stv1, true, 0, 42);
-        Empty(loctestnum, loctesterr, stv1, false);
-        Size(loctestnum, loctesterr, stv1, true, 1);
-        GetFront(loctestnum, loctesterr, stv1, true, 42);
-        GetBack(loctestnum, loctesterr, stv1, true, 42);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 42);
-
-        // Traversal (dovrebbe stampare solo 42)
-        TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-        TraversePostOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-        // Ordinamento (non deve cambiare nulla, ma non deve crashare)
-        stv1.Sort();
-
-        // Mappatura (es. raddoppia elemento)
-        MapPostOrder(loctestnum, loctesterr, stv1, true, &MapDouble<int>);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 84);
-
-        MapPostOrder(loctestnum, loctesterr, stv1, true, &MapDecrement<int>);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 83);
-        MapPostOrder(loctestnum, loctesterr, stv1, true, &MapIncrement<int>);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 84);
-        // Fold (es. somma elemento)
-        int sum = 0;
-        FoldPostOrder(loctestnum, loctesterr, stv1, true, &FoldAdd<int>, sum, 84);
-
-        // Confronto con un altro vettore
-        lasd::SortableVector<int> stv2(1);
-        SetAt(loctestnum, loctesterr, stv2, true, 0, 84);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        stv2.Resize(2);
-        SetAt(loctestnum, loctesterr, stv2, true, 1, 42);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        stv2 = std::move(stv1);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        stv1 = std::move(stv2);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        stv1.Clear();
-        stv2.Clear();
-
-        // Già ordinato
-        lasd::SortableVector<int> stvSorted(5);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 0, 1);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 1, 2);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 2, 3);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 3, 4);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 4, 5);
-        stvSorted.Sort(); // Deve restare uguale
-        TraversePreOrder(loctestnum, loctesterr, stvSorted, true, &TraversePrint<int>);
-
-        // Inversamente ordinato
-        lasd::SortableVector<int> stvRev(5);
-        SetAt(loctestnum, loctesterr, stvRev, true, 0, 5);
-        SetAt(loctestnum, loctesterr, stvRev, true, 1, 4);
-        SetAt(loctestnum, loctesterr, stvRev, true, 2, 3);
-        SetAt(loctestnum, loctesterr, stvRev, true, 3, 2);
-        SetAt(loctestnum, loctesterr, stvRev, true, 4, 1);
-        stvRev.Sort(); // Deve diventare {1,2,3,4,5}
-        TraversePreOrder(loctestnum, loctesterr, stvRev, true, &TraversePrint<int>);
-
-        EqualVector(loctestnum, loctesterr, stvSorted, stvRev, true);
-
-        v1 = v1;
-        EqualVector(loctestnum, loctesterr, v1, v1, true);
-
-        lasd::Vector<int> v3(5);
-        SetAt(loctestnum, loctesterr, v3, true, 0, 1);
-        Size(loctestnum, loctesterr, v3, true, 5);
-
-        v3.Clear();
-        Size(loctestnum, loctesterr, v3, true, 0);
-        Empty(loctestnum, loctesterr, v3, true);
-
-
-        lasd::List<int> lst1;
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 1);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 2);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 3);
-
-        TraversePreOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<int>);
-
-        v3 = lst1;
-
-        TraversePreOrder(loctestnum, loctesterr, v3, true, &TraversePrint<int>);
-        EqualLinear(loctestnum, loctesterr, lst1, v3, true);
-        Size(loctestnum, loctesterr, lst1, true, 3);
-        Size(loctestnum, loctesterr, v3, true, 3);
-        lst1.Clear();
-        v3.Clear();
-
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 1);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 2);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 3);
-
-        v3 = move(lst1);   
-        TraversePreOrder(loctestnum, loctesterr, v3, true, &TraversePrint<int>);
-        EqualLinear(loctestnum, loctesterr, lst1, v3, true);
-
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 4);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 1);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 10);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 9);
-
-
-        lasd::SortableVector<int> sv4(lst1);
-        sv4.Sort();
-        TraversePreOrder(loctestnum, loctesterr, sv4, true, &TraversePrint<int>);
-        EqualLinear(loctestnum, loctesterr, lst1, sv4, false);
-        Size(loctestnum, loctesterr, lst1, true, 7);
-
-        sv4.Clear();
-        lst1.Clear();
-        v3.Clear();
-
-        sv4.Resize(3);
-        Size(loctestnum, loctesterr, sv4, true, 3);
-        SetAt(loctestnum, loctesterr, sv4, true, 0, 1);
-        SetAt(loctestnum, loctesterr, sv4, true, 1, 2);
-        SetAt(loctestnum, loctesterr, sv4, true, 2, 3);
-
-        MapPostOrder(loctestnum, loctesterr, sv4, true, &MapDouble<int>);
-        TraversePreOrder(loctestnum, loctesterr, sv4, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, sv4, true, &MapDecrement<int>);
-        TraversePreOrder(loctestnum, loctesterr, sv4, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, sv4, true, &MapIncrement<int>);
-        TraversePreOrder(loctestnum, loctesterr, sv4, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, sv4, true, &MapInvert<int>);
-        TraversePreOrder(loctestnum, loctesterr, sv4, true, &TraversePrint<int>);
-        
-        MapPostOrder(loctestnum, loctesterr, sv4, true, &MapHalf<int>);
-        TraversePreOrder(loctestnum, loctesterr, sv4, true, &TraversePrint<int>);
-        MapPostOrder(loctestnum, loctesterr, sv4, true, &MapParityInvert<int>);   
-
-        Traverse(loctestnum,loctesterr,sv4,true,&TraversePrint<int>);
-        Fold(loctestnum,loctesterr,sv4,false,&FoldAdd<int>,-2,10);
-        Traverse(loctestnum,loctesterr,sv4,true,&TraversePrint<int>);
-
-        
-
-
+template <typename Data>
+void EqualHeapVec(uint& testnum, uint& testerr, const lasd::HeapVec<Data>& heap1, const lasd::HeapVec<Data>& heap2, bool chk) {
+  bool tst;
+  testnum++;
+  try {
+    std::cout << " " << testnum << " (" << testerr << ") The two heaps are " << ((tst = (heap1 == heap2)) ? "" : "not ") << "equal: ";
+    std::cout << ((tst = (tst == chk)) ? "Correct" : "Error") << "!" << std::endl;
+  } catch (std::exception& exc) {
+    std::cout << "\"" << exc.what() << "\": " << ((tst = !chk) ? "Correct" : "Error") << "!" << std::endl;
+  }
+  testerr += (1 - static_cast<uint>(tst));
+}
+template <typename Data>
+void NonEqualHeapVec(uint& testnum, uint& testerr, const lasd::HeapVec<Data>& heap1, const lasd::HeapVec<Data>& heap2, bool chk) {
+    bool tst;
+    testnum++;
+    try {
+        std::cout << " " << testnum << " (" << testerr << ") The two heaps are " << ((tst = (heap1 != heap2)) ? "not " : "") << "equal: ";
+        std::cout << ((tst = (tst == chk)) ? "Correct" : "Error") << "!" << std::endl;
+    } catch (std::exception& exc) {
+        std::cout << "\"" << exc.what() << "\": " << ((tst = !chk) ? "Correct" : "Error") << "!" << std::endl;
     }
-    catch (...)
-    {
-        loctestnum++;
-        loctesterr++;
-        cout << endl
-             << "Unmanaged error! " << endl;
-    }
-    cout << "End of Vector<int> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-    testnum += loctestnum;
-    testerr += loctesterr;
+    testerr += (1 - static_cast<uint>(tst));
+}
+
+template <typename Data>
+void ChangeMovePQ(uint& testnum, uint& testerr, lasd::PQ<Data>& pq, ulong idx, Data&& val, bool expectedSuccess) {
+  testnum++;
+  bool succeeded = true;
+  try {
+    std::cout << " " << testnum << " Change the value \"" << pq[idx] << "\" at index \"" << idx 
+              << "\" to the value \"" << val << "\" in the priority queue: ";
+    pq.Change(idx, std::move(val));
+    std::cout << "Operation completed. ";
+  } catch (const std::exception& exc) {
+    std::cout << "\"" << exc.what() << "\" Exception thrown. ";
+    succeeded = false;
+  }
+
+  if (succeeded == expectedSuccess) {
+    std::cout << "Correct!" << std::endl;
+  } else {
+    std::cout << "Error!" << std::endl;
+    testerr++;
+  }
+}
+
+
+template <typename Data>
+void ChangeCopyPQ(uint& testnum, uint& testerr, lasd::PQ<Data>& pq, ulong idx, const Data& val, bool expectedSuccess) {
+  testnum++;
+  bool succeeded = true;
+  try {
+    std::cout << " " << testnum << " Change the value \"" << pq[idx] << "\" at index \"" << idx 
+              << "\" to the value \"" << val << "\" in the priority queue: ";
+    pq.Change(idx, val);
+    std::cout << "Operation completed. ";
+  } catch (const std::exception& exc) {
+    std::cout << "\"" << exc.what() << "\" Exception thrown. ";
+    succeeded = false;
+  }
+
+  if (succeeded == expectedSuccess) {
+    std::cout << "Correct!" << std::endl;
+  } else {
+    std::cout << "Error!" << std::endl;
+    testerr++;
+  }
 }
 
 
 
-  /* ************************************************************************** */
-  void testVectorFloat(unsigned &testnum, unsigned &testerr)
-{
-    unsigned loctestnum = 0, loctesterr = 0;
-    cout << endl
-         << "Begin of Vector<float> Test:" << endl;
-    try
-    {
-        double n1 = generateRandomDouble();
-        double n2 = generateRandomDouble();
-        lasd::Vector<double> v1(10);
-        lasd::Vector<double> v2(10);
-
-        SetFront(loctestnum, loctesterr, v1, true, 15.5);
-        SetAt(loctestnum, loctesterr, v2, true, 0, 8.25);
-        v1.Resize(4);
-        v2.Resize(4);
-        EqualVector(loctestnum, loctesterr, v1, v2, false);
-        v1.Clear();
-        v2.Clear();
-        Size(loctestnum, loctesterr, v1, true, 0);
-        Size(loctestnum, loctesterr, v2, true, 0);
-        v1.Resize(5);
-        v2.Resize(5);
-        SetAt(loctestnum, loctesterr, v1, true, 0, 8.25);
-        SetAt(loctestnum, loctesterr, v2, true, 0, 8.25);
-        EqualVector(loctestnum, loctesterr, v1, v2, true);
-
-        v1.Clear();
-        v2.Clear();
-        v1.Resize(5);
-        v2.Resize(5);
-
-        for(int i = 0; i < 5; i++)
-        {
-            n1 = generateRandomDouble();
-            SetAt(loctestnum, loctesterr, v1, true, i, n1);
-            n2 = generateRandomDouble();
-            SetAt(loctestnum, loctesterr, v2, true, i, n2);
-        }
-
-        cout<<"Funzionamento operator []"<<endl;
-        for(int i = 0; i < 5; i++){
-            cout<< v1[i] << "-";
-        };
-        cout<<" "<<endl;
-
-        EqualVector(loctestnum, loctesterr, v1, v2, false);
-        v1 = v2;
-        EqualVector(loctestnum, loctesterr, v1, v2, true);
-
-
-        lasd::SortableVector<double> sortv1(std::move(v1));
-        n1 = generateRandomDouble();
-        Empty(loctestnum, loctesterr, v1, false);
-        Size(loctestnum, loctesterr, v1, false, 0);
-        v1.Clear();
-        Empty(loctestnum, loctesterr, v1, true);
-        Size(loctestnum, loctesterr, v1, true, 0);
-        n1 = generateRandomDouble();
-        SetBack(loctestnum, loctesterr, v1, false, 19.75);
-        EqualVector(loctestnum, loctesterr, sortv1, v2, true);
-        SetBack(loctestnum, loctesterr, sortv1, true, 8.25);
-        n1 = generateRandomDouble();
-        SetAt(loctestnum, loctesterr, sortv1, true, 1, n1);
-        GetBack(loctestnum, loctesterr, sortv1, true, 8.25);
-        GetAt(loctestnum, loctesterr, sortv1, false, 7, 0.0);
-
-        sortv1.Sort();
-        TraversePreOrder(loctestnum, loctesterr, sortv1, true, &TraversePrint<double>);
-        MapPostOrder(loctestnum, loctesterr, sortv1, true, &MapDouble<double>);
-        TraversePreOrder(loctestnum, loctesterr, sortv1, true, &TraversePrint<double>);
-
-        lasd::SortableVector<double> sortv2(sortv1);
-        sortv2.Resize(7);
-        SetAt(loctestnum, loctesterr, sortv2, true, 4, 314.16);
-        SetBack(loctestnum, loctesterr, sortv2, true, -987.65);
-
-        EqualVector(loctestnum, loctesterr, v2, sortv1, false);
-        v2 = sortv1;
-        EqualVector(loctestnum, loctesterr, v2, sortv1, true);
-        v2.Resize(10);
-
-        Map(loctestnum, loctesterr, v2, true, &MapIncrement<double>);
-        TraversePreOrder(loctestnum, loctesterr, v2, true, &TraversePrint<double>);
-        TraversePostOrder(loctestnum, loctesterr, v2, true, &TraversePrint<double>);
-
-        v2.Clear();
-        Size(loctestnum, loctesterr, v2, true, 0);
-        SetFront(loctestnum, loctesterr, v2, false, 456.78);
-        MapPostOrder(loctestnum, loctesterr, v2, true, &MapDecrement<double>);
-        v2.Resize(10);
-        for(int i = 0; i < 10; i++)
-        {
-            SetAt(loctestnum, loctesterr, v2, true, i, generateRandomDouble());
-        }
-
-        lasd::SortableVector<double> sv3(std::move(v2));
-        sv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, sv3, true, &TraversePrint<double>);
-        EqualVector(loctestnum, loctesterr, sv3, sortv1, false);
-
-        sv3.Clear();
-        sv3.Sort();
-        Empty(loctestnum, loctesterr, sv3, true);
-        Size(loctestnum, loctesterr, sv3, true, 0);
-
-        lasd::SortableVector<double> stv3;
-        Empty(loctestnum, loctesterr, stv3, true);
-        Size(loctestnum, loctesterr, stv3, true, 0);
-        stv3.Resize(0);
-        Empty(loctestnum, loctesterr, stv3, true);
-        Size(loctestnum, loctesterr, stv3, true, 0);
-        stv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<double>);
-        TraversePostOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<double>);
-        MapPostOrder(loctestnum, loctesterr, stv3, true, &MapDouble<double>);
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<double>);
-        stv3.Clear();
-        GetAt(loctestnum, loctesterr, stv3, false, 0, 1.0);
-        GetFront(loctestnum, loctesterr, stv3, false, 1.0);
-        GetBack(loctestnum, loctesterr, stv3, false, 1.0);
-        stv3.Resize(4);
-        Size(loctestnum, loctesterr, stv3, true, 4);
-
-        lasd::Vector<double> v4(4);
-        Empty(loctestnum, loctesterr, v4, false);
-        for(int i = 0; i < 4; i++)
-        {
-            SetAt(loctestnum, loctesterr, v4, true, i, generateRandomDouble());
-        }
-        stv3 = v4;
-        EqualVector(loctestnum, loctesterr, stv3, v4, true);
-        stv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<double>);
-        MapPostOrder(loctestnum, loctesterr, stv3, true, &MapDouble<double>);
-        NonEqualVector(loctestnum, loctesterr, stv3, v4, true);
-
-        v4.Resize(7);
-        stv3.Resize(7);
-
-        for(int i = 0; i < 7; i++)
-        {
-            SetAt(loctestnum, loctesterr, v4, true, i, generateRandomDouble());
-        }
-
-        stv3 = move(v4);
-        EqualVector(loctestnum, loctesterr, stv3, v4, true);
-        stv3.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<double>);
-        MapPostOrder(loctestnum, loctesterr, stv3, true, &MapDouble<double>);
-        NonEqualVector(loctestnum, loctesterr, stv3, v4, true);
-        v4.Clear();
-        Size(loctestnum, loctesterr, v4, true, 0);
-        Empty(loctestnum, loctesterr, v4, true);
-        v4.Resize(0);
-        Size(loctestnum, loctesterr, v4, true, 0);
-        Empty(loctestnum, loctesterr, v4, true);
-
-        lasd::SortableVector<double> stv1(1);
-        SetAt(loctestnum, loctesterr, stv1, true, 0, 99.9);
-        Empty(loctestnum, loctesterr, stv1, false);
-        Size(loctestnum, loctesterr, stv1, true, 1);
-        GetFront(loctestnum, loctesterr, stv1, true, 99.9);
-        GetBack(loctestnum, loctesterr, stv1, true, 99.9);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 99.9);
-
-        TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<double>);
-        TraversePostOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<double>);
-
-        stv1.Sort();
-
-        MapPostOrder(loctestnum, loctesterr, stv1, true, &MapDouble<double>);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 199.8);
-
-        MapPostOrder(loctestnum, loctesterr, stv1, true, &MapDecrement<double>);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 198.8);
-        MapPostOrder(loctestnum, loctesterr, stv1, true, &MapIncrement<double>);
-        GetAt(loctestnum, loctesterr, stv1, true, 0, 199.8);
-
-        double sum = 0;
-        FoldPostOrder(loctestnum, loctesterr, stv1, true, &FoldAdd<double>, sum, 199.8);
-        
-
-        lasd::SortableVector<double> stv2(1);
-        SetAt(loctestnum, loctesterr, stv2, true, 0, 199.8);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        stv2.Resize(2);
-        SetAt(loctestnum, loctesterr, stv2, true, 1, 99.9);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        stv2 = std::move(stv1);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        stv1 = std::move(stv2);
-        EqualVector(loctestnum, loctesterr, stv1, stv2, false);
-        NonEqualVector(loctestnum, loctesterr, stv1, stv2, true);
-        stv1.Clear();
-        stv2.Clear();
-
-        lasd::SortableVector<double> stvSorted(5);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 0, 2.2);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 1, 4.4);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 2, 6.6);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 3, 8.8);
-        SetAt(loctestnum, loctesterr, stvSorted, true, 4, 10.1);
-        stvSorted.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stvSorted, true, &TraversePrint<double>);
-
-        lasd::SortableVector<double> stvRev(5);
-        SetAt(loctestnum, loctesterr, stvRev, true, 0, 10.1);
-        SetAt(loctestnum, loctesterr, stvRev, true, 1, 8.8);
-        SetAt(loctestnum, loctesterr, stvRev, true, 2, 6.6);
-        SetAt(loctestnum, loctesterr, stvRev, true, 3, 4.4);
-        SetAt(loctestnum, loctesterr, stvRev, true, 4, 2.2);
-        stvRev.Sort();
-        TraversePreOrder(loctestnum, loctesterr, stvRev, true, &TraversePrint<double>);
-
-        EqualVector(loctestnum, loctesterr, stvSorted, stvRev, true);
-
-        v1 = v1;
-        EqualVector(loctestnum, loctesterr, v1, v1, true);
-    }
-    catch (...)
-    {
-        loctestnum++;
-        loctesterr++;
-        cout << endl
-             << "Unmanaged error! " << endl;
-    }
-    cout << "End of Vector<float> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-    testnum += loctestnum;
-    testerr += loctesterr;
-}
- /* ************************************************************************** */
 
 
 
-void testVectorString(unsigned &testnum, unsigned &testerr)
-{
-    unsigned loctestnum = 0, loctesterr = 0;
-    cout << endl
-         << "Begin of Vector<String> Test:" << endl;
-    try
-    {
-        // Test per Vector<string> e SortableVector<string> (copertura completa)
-        lasd::Vector<string> v1(5);
-        Empty(loctestnum, loctesterr, v1, false);
-
-        SetAt(loctestnum, loctesterr, v1, true, 0,string( "Il"));
-        SetAt(loctestnum, loctesterr, v1, true, 1, string("Napoli"));
-        SetAt(loctestnum, loctesterr, v1, true, 2, string("campione"));
-        SetAt(loctestnum, loctesterr, v1, true, 3, string("d'Italia"));
-        SetAt(loctestnum, loctesterr, v1, true, 4, string("2022/23"));
-
-        // Accesso valido e invalido
-        GetAt(loctestnum, loctesterr, v1, true, 3, string("d'Italia"));
-        GetAt(loctestnum, loctesterr, v1, false, 5, string(""));
-        GetFront(loctestnum, loctesterr, v1, true, string("Il"));
-        GetBack(loctestnum, loctesterr, v1, true, string("2022/23"));
-
-        // Traverse e Fold
-        TraversePreOrder(loctestnum, loctesterr, v1, true, &TraversePrint<string>);
-        FoldPostOrder(loctestnum, loctesterr, v1, true, &FoldStringConcatenate, string(""), string("2022/23d'ItaliacampioneNapoliIl"));
-
-        // Copy constructor e ordinamento
-        lasd::SortableVector<string> v2(v1);
-        EqualVector(loctestnum, loctesterr, v1, v2, true);
-        v2.Sort();
-        TraversePreOrder(loctestnum, loctesterr, v2, true, &TraversePrint<string>);
-
-        // Exists su presente e assente
-        Exists(loctestnum, loctesterr, v2, false, string("Milan"));
-        Exists(loctestnum, loctesterr, v2, true, string("Napoli"));
-
-        // Map clear su tutti gli elementi
-        MapPreOrder(loctestnum, loctesterr, v2, true, [](string &str) { str.clear(); });
-        FoldPostOrder(loctestnum, loctesterr, v2, true, &FoldStringConcatenate,string(""), string(""));
-
-        // Confronto con altro vettore vuoto
-        lasd::Vector<string> v3(5);
-        EqualVector(loctestnum, loctesterr, v1, v3, false);
-        Exists(loctestnum, loctesterr, v3, true, string(""));
-
-        // Move assignment
-        v3 = std::move(v1);
-        Exists(loctestnum, loctesterr, v3, false, string(""));
-
-        // Resize + Exists
-        v3.Resize(9);
-        Exists(loctestnum, loctesterr, v3, true, string(""));
-        Exists(loctestnum, loctesterr, v3, true, string("2022/23"));
-
-        // Resize down
-        v3.Resize(3);
-        Exists(loctestnum, loctesterr, v3, false, string("d'Italia"));
-
-        // Clear e riclear
-        v3.Clear();
-        Empty(loctestnum, loctesterr, v3, true);
-        v3.Clear(); // doppio clear
-        Empty(loctestnum, loctesterr, v3, true);
-
-        // Move su vettore vuoto
-        lasd::SortableVector<string> v4(std::move(v3));
-        Empty(loctestnum, loctesterr, v4, true);
-
-        // Resize up e Map append
-        v4.Resize(5);
-        MapPreOrder(loctestnum, loctesterr, v4, true, [](string &str) { MapStringAppend(str, "<--Hello"); });
-        SetAt(loctestnum, loctesterr, v4, true, 0, string("Hello"));
-        FoldPostOrder(loctestnum, loctesterr, v4, true, &FoldStringConcatenate, string(""), string("<--Hello<--Hello<--Hello<--HelloHello"));
-
-        Exists(loctestnum, loctesterr, v4, false, string("ciao"));
-        Exists(loctestnum, loctesterr, v4, true, string("Hello"));
-
-        // Clear finale
-        v4.Clear();
-        Empty(loctestnum, loctesterr, v4, true);
-
-        // Accesso su vettore vuoto
-        GetFront(loctestnum, loctesterr, v4, false, string("Hello"));
-        GetBack(loctestnum, loctesterr, v4, false, string("Hello"));
-        GetAt(loctestnum, loctesterr, v4, false, 0, string(""));
-
-
-        lasd::List<string> lst1;
-        InsertAtBack(loctestnum, loctesterr, lst1, true, string("Ti"));
-        InsertAtBack(loctestnum, loctesterr, lst1, true, string("Voglio"));
-        InsertAtBack(loctestnum, loctesterr, lst1, true, string("Bene"));
-        InsertAtBack(loctestnum, loctesterr, lst1, true, string("Gioia"));
-        TraversePreOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<string>);
-        v4 = lst1;
-        TraversePreOrder(loctestnum, loctesterr, v4, true, &TraversePrint<string>);
-
-        lst1.Clear();
-        v4 = move(lst1);
-        TraversePreOrder(loctestnum, loctesterr, v4, true, &TraversePrint<string>);
-        EqualLinear(loctestnum, loctesterr, lst1, v4, true);
-        Size(loctestnum, loctesterr, v4, true, 0);
-
-        InsertAtBack(loctestnum, loctesterr, lst1, true, string("Ti"));
-        v4 = move(lst1);
-        TraversePreOrder(loctestnum, loctesterr, v4, true, &TraversePrint<string>);
-
-        v4.Clear();
-        v4.Resize(2);
-        SetAt(loctestnum, loctesterr, v4, true, 0, string("Ti"));
-        SetAt(loctestnum, loctesterr, v4, true, 1, string("Voglio"));
-
-        MapPreOrder(loctestnum, loctesterr, v4, true, [](string &str) { MapStringNonEmptyAppend(str, "<--Hello"); });
-        
-
-
-
-    }
-    catch (...)
-    {
-        loctestnum++;
-        loctesterr++;
-        cout << endl
-             << "Unmanaged error! " << endl;
-    }
-    cout << "End of Vector<String> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-    testnum += loctestnum;
-    testerr += loctesterr;
+template <typename Data>
+void InsertMovePQ(uint & testnum, uint & testerr, lasd::PQ<Data> & pq, Data && val) {
+  testnum++;
+  bool tst = true;
+  try {
+    std::cout << " " << testnum << " Insert on the priority queue of the value \"" << val << "\": ";
+    pq.Insert(std::move(val));
+    std::cout << "Correct!" << std::endl;
+  }
+  catch (std::exception & exc) {
+    std::cout << "\"" << exc.what() << "\": " << "Error!" << std::endl;
+    tst = false;
+  }
+  testerr += (1 - (uint) tst);
 }
 
 
 
-  /* ************************************************************************** */
 
 
-
-  void testVector(unsigned &testnum, unsigned &testerr)
-{
-    unsigned loctestnum = 0, loctesterr = 0;
-    testVectorInt(loctestnum, loctesterr);
-    testVectorFloat(loctestnum, loctesterr);
-    testVectorString(loctestnum, loctesterr);
-    testnum += loctestnum;
-    testerr += loctesterr;
-    cout << endl
-         << "Exercise 1 - Vector (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-}
-/* ************************************************************************** */
-
-void testListInt(unsigned &testnum, unsigned &testerr){
-    unsigned loctestnum = 0, loctesterr = 0;
-    cout << endl
-         << "Begin of List<int> Test:" << endl;
-    try
-    {
-        // Test estesi per List<int> (copertura completa)
-        lasd::List<int> lst1;
-        Empty(loctestnum, loctesterr, lst1, true);
-        Size(loctestnum, loctesterr, lst1, true, 0);
-
-        // Insert front/back e accesso
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 25);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 90);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 1);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 2);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 3);
-
-        cout<<"Funzionamento operator []"<<endl;
-        for(int i = 0; i < 5; i++){
-            cout<< lst1[i] << "->";
-        };
-        cout<<" "<<endl;
-
-        // Accessi validi e invalidi
-        GetAt(loctestnum, loctesterr, lst1, false, 10, 0);
-        SetAt(loctestnum, loctesterr, lst1, true, 1, 7);
-        SetAt(loctestnum, loctesterr, lst1, false, 5, 7);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 7999);
-        GetAt(loctestnum, loctesterr, lst1, true, 0, 7999);
-        GetFront(loctestnum, loctesterr, lst1, true, 7999);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 900);
-        GetBack(loctestnum, loctesterr, lst1, true, 900);
-
-        // Map e Fold
-        MapPreOrder(loctestnum, loctesterr, lst1, true, &MapDouble<int>);
-        MapPostOrder(loctestnum, loctesterr, lst1, true, &MapDouble<int>);
-        FoldPreOrder(loctestnum, loctesterr, lst1, true, &FoldAdd<int>, 0, 35748);
-        FoldPostOrder(loctestnum, loctesterr, lst1, true, &FoldAdd<int>, 0, 35748);
-        FoldPreOrder(loctestnum, loctesterr, lst1, true, &FoldParity, 0, 0);
-        FoldPostOrder(loctestnum, loctesterr, lst1, true, &FoldParity, 0, 0);
-
-        // Traverse
-        TraversePreOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<int>);
-        TraversePostOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<int>);
-
-        // Exists
-        Exists(loctestnum, loctesterr, lst1, false, 99911);
-        Exists(loctestnum, loctesterr, lst1, true, 3600);
-
-        // Copy e Move
-        lasd::List<int> lst2(lst1);
-        EqualList(loctestnum, loctesterr, lst1, lst2, true);
-        NonEqualList(loctestnum, loctesterr, lst1, lst2, false);
-
-        InsertAtFront(loctestnum, loctesterr, lst2, true, generateRandomInt());
-        NonEqualList(loctestnum, loctesterr, lst1, lst2, true);
-
-        lasd::List<int> lst3 = std::move(lst2);
-        Empty(loctestnum, loctesterr, lst2, true);
-        NonEqualList(loctestnum, loctesterr, lst1, lst2, true);
-        TraversePreOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<int>);
-
-        // Insert/Remove molteplici
-        for (int i = 0; i < 10; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomInt());
-        }
-        for (int i = 0; i < 5; ++i) {
-        InsertAtFront(loctestnum, loctesterr, lst3, true, generateRandomInt());
-        }
-        TraversePostOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<int>);
-
-
-
-        // Clear
-        lst3.Clear();
-        Empty(loctestnum, loctesterr, lst3, true);
-        Size(loctestnum, loctesterr, lst3, true, 0);
-
-        // Altri test di confronto
-        lasd::List<int> lst4;
-        for (int i = 0; i < 5; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst4, true, generateRandomInt());
-        }
-        lasd::List<int> lst5(lst4);
-        EqualList(loctestnum, loctesterr, lst4, lst5, true);
-        InsertAtBack(loctestnum, loctesterr, lst5, true, generateRandomInt());
-        NonEqualList(loctestnum, loctesterr, lst4, lst5, true);
-
-        // Map su lista vuota
-        MapPreOrder(loctestnum, loctesterr, lst3, true, [](int &d) { d = 1; });
-        MapPostOrder(loctestnum, loctesterr, lst3, true, [](int &d) { d = 1; });
-
-        // Fold su lista vuota
-        FoldPreOrder(loctestnum, loctesterr, lst3, true, &FoldParity, 0, 0);
-        FoldPostOrder(loctestnum, loctesterr, lst3, true, &FoldParity, 0, 0);
-
-        // Exists su vuota
-        Exists(loctestnum, loctesterr, lst3, false, 0);
-
-        // Riempimento massiccio + clear
-        for (int i = 0; i < 40; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomInt());
-        }
-        Size(loctestnum, loctesterr, lst3, true, 40);
-        lst3.Clear();
-        Size(loctestnum, loctesterr, lst3, true, 0);
-        Empty(loctestnum, loctesterr, lst3, true);
-
-        // Confronti post clear
-        EqualList(loctestnum, loctesterr, lst3, lst4, false);
-        EqualLinear(loctestnum, loctesterr, lst3, lst4, false);
-
-        // Map/Fold misti
-        for (int i = 0; i < 10; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomInt());
-        }
-        MapPreOrder(loctestnum, loctesterr, lst3, true, [](int &d) { d *= -1; });
-
-        TraversePreOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<int>);
-        TraversePostOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<int>);
-
-        lasd::Vector<int> v5(10);
-        for (int i = 0; i < 10; ++i) {
-            SetAt(loctestnum, loctesterr, v5, true, i, generateRandomInt());
-        }
-
-        lst3.Clear();
-        Empty(loctestnum, loctesterr, lst3, true);
-        lst3 = v5;
-        EqualLinear(loctestnum, loctesterr, lst3, v5, true);
-        NonEqualLinear(loctestnum, loctesterr, lst3, v5, false);
-        Size(loctestnum, loctesterr, lst3, true, 10);
-        TraversePreOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<int>);
-
-        lst3.Clear();
-        lst3 = std::move(v5);
-        EqualLinear(loctestnum, loctesterr, lst3, v5, true);
-        Size(loctestnum, loctesterr, lst3, true, 10);
-        TraversePreOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<int>);
-
-        lasd::SortableVector<int> sv1(10);
-        for (int i = 0; i < 10; ++i) {
-            SetAt(loctestnum, loctesterr, sv1, true, i, generateRandomInt());
-        }
-        sv1.Sort();
-        lst3.Clear();
-        lasd::List<int> lst6(std::move(sv1));
-        EqualLinear(loctestnum, loctesterr, lst3, sv1, false);
-        TraversePreOrder(loctestnum, loctesterr, lst6, true, &TraversePrint<int>);
-
-        lst6.Clear();
-
-        InsertAtFront(loctestnum, loctesterr, lst6, true, std::move(1));
-
-        RemoveFromFront(loctestnum, loctesterr, lst6, true);
-
-        InsertAtBack(loctestnum, loctesterr, lst6, true, 1);
-
-        FrontNRemove(loctestnum, loctesterr, lst6, true,1);
-
-        lst6.Clear();
-
-        RemoveFromFront(loctestnum, loctesterr, lst6, false);
-        RemoveFromBack(loctestnum, loctesterr, lst6, false);
-        FrontNRemove(loctestnum, loctesterr, lst6, false, 1);
-        BackNRemove(loctestnum, loctesterr, lst6, false, 1);
-
-        InsertAtFrontMove(loctestnum,loctesterr,lst6,true,std::move(1));
-        InsertAtFrontMove(loctestnum,loctesterr,lst6,true,std::move(2));
-        InsertAtFrontMove(loctestnum,loctesterr,lst6,true,std::move(3));
-
-
-
-        lasd::List<int> lst7;
-
-        lst7 = lst6;
-
-        RemoveFromBack(loctestnum, loctesterr, lst6, true);
-        BackNRemove(loctestnum, loctesterr, lst6, true, 2);
-
-        lst7.Clear();
-
-        Size(loctestnum,loctesterr,lst7,true,0);
-        RemoveFromFront(loctestnum,loctesterr,lst7,false);
-        FrontNRemove(loctestnum,loctesterr,lst7,false,1);
-        RemoveFromBack(loctestnum,loctesterr,lst7,false);
-
-        
-        InsertAtFrontMove(loctestnum,loctesterr,lst7,true,std::move(1));
-
-        RemoveFromBack(loctestnum,loctesterr,lst7,true);
-
-        Empty(loctestnum,loctesterr,lst7,true);
-
-        InsertAtFrontMove(loctestnum,loctesterr,lst7,true,std::move(1));
-
-        NonEqualList(loctestnum,loctesterr,lst7,lst6,true);
-
-        lst7 = std::move(lst6);
-
-
-
-
-        
-
-
-        
-    }
-    catch (...)
-    {
-        loctestnum++;
-        loctesterr++;
-        cout << endl
-             << "Unmanaged error! " << endl;
-    }
-    cout << "End of List<int> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-    testnum += loctestnum;
-    testerr += loctesterr;
-}
 
     /* ************************************************************************** */
-    
-    void testListDouble(unsigned &testnum, unsigned &testerr){
-    unsigned loctestnum = 0, loctesterr = 0;
-        cout << endl
-            << "Begin of List<double> Test:" << endl;
-        try{
-            // Test estesi per List<int> (copertura completa)
-        lasd::List<double> lst1;
-        Empty(loctestnum, loctesterr, lst1, true);
-        Size(loctestnum, loctesterr, lst1, true, 0);
 
-        // Insert front/back e accesso
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 45.9);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 90.10);
-        SetFront(loctestnum, loctesterr, lst1, true, 25.5);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 1.0);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 2.3);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 3.9);
-        MapPreOrder(loctestnum, loctesterr, lst1, true, &MyMapPrint<double>);
-
-        cout<<"Funzionamento operator []"<<endl;
-        for(int i = 0; i < 5; i++){
-            cout<< lst1[i] << "->";
-        };
-        cout<<" "<<endl;
-
-        // Accessi validi e invalidi
-        GetAt(loctestnum, loctesterr, lst1, false, 10, 0.10);
-        SetAt(loctestnum, loctesterr, lst1, true, 1, 25.5);
-        SetAt(loctestnum, loctesterr, lst1, false, 5, 7.0);
-        InsertAtFront(loctestnum, loctesterr, lst1, true, 24.2);
-        GetAt(loctestnum, loctesterr, lst1, true, 0, 24.2);
-        GetFront(loctestnum, loctesterr, lst1, true, 24.2);
-        InsertAtBack(loctestnum, loctesterr, lst1, true, 89.1);
-        GetBack(loctestnum, loctesterr, lst1, true, 89.1);
-
-        // Map e Fold
-        MapPreOrder(loctestnum, loctesterr, lst1, true, &MapDouble<double>);
-        MapPostOrder(loctestnum, loctesterr, lst1, true, &MapDouble<double>);
-        FoldPreOrder(loctestnum, loctesterr, lst1, true, &FoldAdd<double>, 0, 765);
-        FoldPostOrder(loctestnum, loctesterr, lst1, false, &FoldAdd<double>, 0, 10);
-        FoldPreOrder(loctestnum, loctesterr, lst1, false, &FoldParity, 0, 0);
-        FoldPostOrder(loctestnum, loctesterr, lst1, false, &FoldParity, 0, 0);
-
-
-        // Traverse
-        TraversePreOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<double>);
-        TraversePostOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<double>);
-
-        // Exists
-        Exists(loctestnum, loctesterr, lst1, false, 91829.1);
-
-        // Copy e Move
-        lasd::List<double> lst2(lst1);
-        EqualList(loctestnum, loctesterr, lst1, lst2, true);
-        NonEqualList(loctestnum, loctesterr, lst1, lst2, false);
-
-        InsertAtFront(loctestnum, loctesterr, lst2, true, generateRandomDouble());
-        NonEqualList(loctestnum, loctesterr, lst1, lst2, true);
-
-        lasd::List<double>lst3 = std::move(lst2);
-        Empty(loctestnum, loctesterr, lst2, true);
-        NonEqualList(loctestnum, loctesterr, lst1, lst2, true);
-        TraversePreOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<double>);
-
-        // Insert/Remove molteplici
-        for (int i = 0; i < 10; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomDouble());
-        }
-        for (int i = 0; i < 5; ++i) {
-        InsertAtFront(loctestnum, loctesterr, lst3, true, generateRandomDouble());
-        }
-        TraversePostOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<int>);
-
-
-        // Clear
-        lst3.Clear();
-        Empty(loctestnum, loctesterr, lst3, true);
-        Size(loctestnum, loctesterr, lst3, true, 0);
-
-        // Altri test di confronto
-        lasd::List<double> lst4;
-        for (int i = 0; i < 5; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst4, true, generateRandomDouble());
-        }
-        lasd::List<double> lst5(lst4);
-        EqualList(loctestnum, loctesterr, lst4, lst5, true);
-        InsertAtBack(loctestnum, loctesterr, lst5, true, generateRandomDouble());
-        NonEqualList(loctestnum, loctesterr, lst4, lst5, true);
-
-        // Map su lista vuota
-        MapPreOrder(loctestnum, loctesterr, lst3, true, [](double &d) { d = 1.0; });
-        MapPostOrder(loctestnum, loctesterr, lst3, true, [](double &d) { d = 1.0; });
-
-        // Fold su lista vuota
-        FoldPreOrder(loctestnum, loctesterr, lst3, true, &FoldParity, 0, 0);
-        FoldPostOrder(loctestnum, loctesterr, lst3, true, &FoldParity, 0, 0);
-
-        // Exists su vuota
-        Exists(loctestnum, loctesterr, lst3, false, 0.0);
-
-        // Riempimento massiccio + clear
-        for (int i = 0; i < 40; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomDouble());
-        }
-        Size(loctestnum, loctesterr, lst3, true, 40);
-        lst3.Clear();
-        Size(loctestnum, loctesterr, lst3, true, 0);
-        Empty(loctestnum, loctesterr, lst3, true);
-
-        // Confronti post clear
-        EqualList(loctestnum, loctesterr, lst3, lst4, false);
-        EqualLinear(loctestnum, loctesterr, lst3, lst4, false);
-
-        // Map/Fold misti
-        for (int i = 0; i < 5; ++i) {
-        InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomDouble());
-        }
-        MapPreOrder(loctestnum, loctesterr, lst3, true, [](double &d) { d *= -1.0; });
-
-        TraversePreOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<double>);
-        TraversePostOrder(loctestnum, loctesterr, lst3, true, &TraversePrint<double>);
-
-        }catch(...){
-            loctestnum++;
-            loctesterr++;
-            cout << endl
-                << "Unmanaged error! " << endl;
-
-        }
-        cout << "End of List<double> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-        testnum += loctestnum;
-        testerr += loctesterr;
-    }
-
- /* ************************************************************************** */
-    void testListString(unsigned &testnum, unsigned &testerr){
-    unsigned loctestnum = 0, loctesterr = 0;
-        cout << endl
-            << "Begin of List<string> Test:" << endl;
-        try{
-            // Test estesi per List<int> (copertura completa)
-        lasd::List<string> lst1;
-        Empty(loctestnum, loctesterr, lst1, true);
-        Size(loctestnum, loctesterr, lst1, true, 0);
-
-        // Insert front/back e accesso
-        InsertAtBack(loctestnum, loctesterr, lst1, true, string("Il"));
-        InsertAtFront(loctestnum, loctesterr, lst1, true, string("Napoli"));
-        InsertAtBack(loctestnum, loctesterr, lst1, true, string("campione"));
-        InsertAtFront(loctestnum, loctesterr, lst1, true, string("d'Italia"));
-        InsertAtBack(loctestnum, loctesterr, lst1, true,string("2022/23"));
-
-        cout<<"Funzionamento operator []"<<endl;
-        for(int i = 0; i < 5; i++){
-            cout<< lst1[i] << "->";
-        };
-        cout<<" "<<endl;
-
-        // Accessi validi e invalidi
-        GetAt(loctestnum, loctesterr,lst1,false , 10,string(""));
-        SetAt(loctestnum, loctesterr,lst1,true , 1,string("2022/23"));
-        SetAt(loctestnum, loctesterr,lst1,false , 5,string(""));
-        InsertAtFront(loctestnum, loctesterr,lst1,true ,string("Milan"));
-        GetAt(loctestnum, loctesterr,lst1,true , 0,string("Milan"));
-        GetFront(loctestnum, loctesterr,lst1,true ,string("Milan"));
-        InsertAtBack(loctestnum, loctesterr,lst1,true ,string("Inter"));
-        GetBack(loctestnum, loctesterr,lst1,true ,string("Inter"));
-
-        // Map e Fold
-        MapPreOrder(loctestnum, loctesterr,lst1,true ,&MyMapPrint<string>);
-        MapPostOrder(loctestnum, loctesterr,lst1,true ,&MyMapPrint<string>);
-        FoldPreOrder(loctestnum, loctesterr,lst1,true ,&FoldStringConcatenate,string(""),string("Miland'Italia2022/23Ilcampione2022/23Inter"));
-        FoldPostOrder(loctestnum, loctesterr,lst1,true ,&FoldStringConcatenate,string(""),string("Inter2022/23campioneIl2022/23d'ItaliaMilan"));
-        MapPreOrder(loctestnum, loctesterr, lst1, true, [](std::string &str) { str.append("Ciao"); });
-
-
-
-
-        }catch(...){
-            loctestnum++;
-            loctesterr++;
-            cout << endl
-                << "Unmanaged error! " << endl;
-
-        }
-        cout << "End of List<string> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-        testnum += loctestnum;
-        testerr += loctesterr;
-    }
-/* ************************************************************************** */
-
-
-
-void testList(unsigned &testnum, unsigned &testerr)
-{
-    unsigned loctestnum = 0, loctesterr = 0;
-    testListInt(loctestnum, loctesterr);
-    testListDouble(loctestnum, loctesterr);
-    testListString(loctestnum, loctesterr);
-    testnum += loctestnum;
-    testerr += loctesterr;
-    cout << endl
-         << "Exercise 1 - List (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-}
-
- /* ************************************************************************** */
-
-    void testSetVecInt(lasd::Vector<int> & vec, unsigned &testnum, unsigned &testerr){
+    void testHeapInt(unsigned &testnum, unsigned &testerr){
         unsigned loctestnum = 0, loctesterr = 0;
         cout << endl
-                << "Begin of SetVec<int> Test:" << endl;
+                << "Begin of Heap<int> Test:" << endl;
             try
             {
-                lasd::SetVec<int> stv1(vec);
-                Empty(loctestnum, loctesterr, stv1, false);
-                Size(loctestnum, loctesterr, stv1, true, 1);
-                // Insert front/back e accesso
-                InsertC(loctestnum, loctesterr, stv1, true, 25);
-                InsertC(loctestnum, loctesterr, stv1, true, 90);
-                InsertC(loctestnum, loctesterr, stv1, true, 1);
-                InsertC(loctestnum, loctesterr, stv1, true, 2);
-                InsertC(loctestnum, loctesterr, stv1, true, 3);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                Size(loctestnum, loctesterr, stv1, true,6);
 
-                cout<<"Funzionamento operator []"<<endl;
-                for(int i = 0; i < 5; i++){
-                    cout<< stv1[i] << "->";
-                };
-                cout<<" "<<endl;
+                lasd::HeapVec<int> h1;
+                Empty(loctestnum, loctesterr, h1, true);
+                Size(loctestnum, loctesterr, h1, true, 0);
+                IsHeap(loctestnum, loctesterr, h1, true);
 
-                lasd::Vector<int> v2(5);
-                Empty(loctestnum, loctesterr, v2, false);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v2, true, i, generateUniqueRandomInt());
-                }
-                InsertSomeC(loctestnum, loctesterr, stv1, true, v2);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
+                h1.Sort();
 
+                IsHeap(loctestnum, loctesterr, h1, true);
 
-                v2.Clear();
-                stv1.Clear();
-                Empty(loctestnum, loctesterr, stv1, true);
-                Size(loctestnum, loctesterr, stv1, true, 0);
-
-                stv1.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertM(loctestnum, loctesterr, stv1, true, generateUniqueRandomInt());
-                }
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                stv1.Clear();
-                stv1.Resize(2);
-                InsertC(loctestnum, loctesterr, stv1, true, 1);
-                InsertC(loctestnum, loctesterr, stv1, false, 1);
-
-                stv1.Clear();
-                stv1.Resize(5);
-
-                v2.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v2, true, i, i+1);
-                }
-                InsertAllC(loctestnum, loctesterr, stv1, true, v2);
-                lasd::SetVec<int> stv2(v2);
-                EqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                InsertM(loctestnum, loctesterr, stv2, true, 10);
-
-                NonEqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                Remove(loctestnum, loctesterr, stv2, true, 1);
-                RemoveSome(loctestnum, loctesterr, stv2, true, v2);
-                TraversePreOrder(loctestnum, loctesterr, stv2, true, &TraversePrint<int>);
-
-                InsertSomeC(loctestnum, loctesterr, stv2, true, v2);
-                TraversePreOrder(loctestnum, loctesterr, stv2, true, &TraversePrint<int>);
-                RemoveAll(loctestnum, loctesterr, stv2, true, v2);
-
-                stv1.Clear();
-                stv2.Clear();
-                
-                stv1.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i+1);
-                }
-
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-
-                Min(loctestnum, loctesterr, stv1, true, 1);
-                Max(loctestnum, loctesterr, stv1, true, 5);
-
-                RemoveMin(loctestnum, loctesterr, stv1, true);
-                RemoveMax(loctestnum, loctesterr, stv1, true);
-
-                MinNRemove(loctestnum, loctesterr, stv1, true, 2);
-                MaxNRemove(loctestnum, loctesterr, stv1, true, 4);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                Min(loctestnum, loctesterr, stv1, true, 3);
-                Max(loctestnum, loctesterr, stv1, true, 3);
-
-                stv1.Clear();
-
-                stv1.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i*2);
-                }
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                Successor(loctestnum, loctesterr, stv1, true, 2,4);
-                Predecessor(loctestnum, loctesterr, stv1, true, 2,0);
-
-                SuccessorNRemove(loctestnum, loctesterr, stv1, true, 2,4);
-                PredecessorNRemove(loctestnum, loctesterr, stv1, true, 2,0);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                RemoveSuccessor(loctestnum, loctesterr, stv1, true, 2);
-                RemovePredecessor(loctestnum, loctesterr, stv1, false, 2);
-
-                stv1.Clear();
-                stv1.Resize(5);
-                stv2.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i);
-                }  
-                
-                stv1 = stv2;
-                EqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                InsertC(loctestnum, loctesterr, stv2, true, 1);
-
-                stv1 = std::move(stv2);
-
-                Empty(loctestnum, loctesterr, stv2, true);
-                EqualSetVec(loctestnum, loctesterr, stv1, stv2, false);
-
-                Exists(loctestnum, loctesterr, stv1, true, 1);
-
-                for(int i = 0; i < 4; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i*3);
-                }  
-
-                for(ulong i = 0; i < stv1.Size() ; i++)
-                {
-                    cout << stv1[i] << " ";
-                }
-                cout<<"\n";
-
-                stv1.Clear();
-
-                stv1.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i);
-                }
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                FoldPreOrder(loctestnum, loctesterr, stv1, true, &FoldAdd<int>, 1, 11);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                FoldPostOrder(loctestnum, loctesterr, stv1, true, &FoldMultiply<int>, 0, 0);
-
-                lasd::Vector<int> v3(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v3, true, i, generateUniqueRandomInt());
-                }
-                stv1 = v3;
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                TraversePreOrder(loctestnum, loctesterr, v3, true, &TraversePrint<int>);
-                NonEqualLinear(loctestnum, loctesterr, stv1, v3, true);
-
-                stv1.Clear();
-                v3.Clear();
-
-                stv1.Resize(5);
-                v3.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v3, true, i, i);
-                }  
-                stv1 = std::move(v3);
-                EqualLinear(loctestnum, loctesterr, stv1, v3, true);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                NonEqualLinear(loctestnum, loctesterr, stv1, v3, false);
-
-
-                stv1.Clear();
-                v3.Clear();
-
-                v3.Resize(5);
-                stv1.Resize(10);
-
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v3, true, i, i);
-                }
-
-                InsertAllC(loctestnum, loctesterr, stv1, true, v3);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                stv1.Clear();
-                stv1.Resize(5);
-                lasd::SetVec<int> stv90;
-                stv90.Resize(10);
-
-                InsertC(loctestnum, loctesterr, stv1, true, 1);
-                InsertC(loctestnum, loctesterr, stv1, true, 2);
-                InsertC(loctestnum, loctesterr, stv1, true, 3);
-                InsertC(loctestnum, loctesterr, stv1, true, 4);
-                InsertC(loctestnum, loctesterr, stv1, true, 5);
-
-                InsertC(loctestnum, loctesterr, stv90, true, 1);
-                InsertC(loctestnum, loctesterr, stv90, true, 2);
-                InsertC(loctestnum, loctesterr, stv90, true, 3);
-                InsertC(loctestnum, loctesterr, stv90, true, 4);
-                InsertC(loctestnum, loctesterr, stv90, true, 5);
-
-                EqualSetVec(loctestnum, loctesterr, stv1, stv90, true);
 
                 lasd::List<int> lst1;
                 InsertAtBack(loctestnum, loctesterr, lst1, true, 1);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 2);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 35);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 31);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 4);
-                MapPreOrder(loctestnum, loctesterr, lst1, true, &MyMapPrint<int>);
-                lasd::SetVec<int> stv3(lst1);
-                EqualLinear(loctestnum, loctesterr, stv1, lst1, false);
-                TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<int>);
+                InsertAtBack(loctestnum, loctesterr, lst1, true, 1000);
+                InsertAtBack(loctestnum, loctesterr, lst1, true, 23);
+                InsertAtBack(loctestnum, loctesterr, lst1, true, 11);
 
-                lst1.Clear();
-                stv3.Clear();
+                h1 = lst1;
+                Empty(loctestnum, loctesterr, h1, false);
+                Size(loctestnum, loctesterr, h1, false, 0);
 
-                InsertAtFront(loctestnum, loctesterr, lst1, true, 1);
-                InsertAtFront(loctestnum, loctesterr, lst1, true, 2);
-                InsertAtFront(loctestnum, loctesterr, lst1, true, 35);
+                IsHeap(loctestnum, loctesterr, h1, true);
 
-                stv3 = std::move(lst1);
-                EqualLinear(loctestnum, loctesterr, stv1, lst1, false);
-                TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<int>);
-                stv3.Clear();
-                lst1.Clear();
+                Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<int>);
 
-                lasd::SortableVector<int> sv1(5);
-                    SetAt(loctestnum, loctesterr, sv1, true, 0,1);
-                    SetAt(loctestnum, loctesterr, sv1, true, 1,222);
-                    SetAt(loctestnum, loctesterr, sv1, true, 2,192);
-                    SetAt(loctestnum, loctesterr, sv1, true, 3,1731);
-                    SetAt(loctestnum, loctesterr, sv1, true, 4,4);
+                h1.Sort();
 
+                Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<int>);
+
+                IsHeap(loctestnum, loctesterr, h1, false);
+
+                EqualLinear(loctestnum, loctesterr, h1, lst1, false);
+
+                InsertAtBack(loctestnum, loctesterr, lst1, true, 9002);
+
+                h1 = std::move(lst1);
+                Empty(loctestnum, loctesterr, lst1, false);
+
+                IsHeap(loctestnum, loctesterr, h1, true);
+
+                Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<int>);
+
+                NonEqualLinear(loctestnum, loctesterr, h1, lst1, true);
+
+                h1.Clear();
+                Empty(loctestnum, loctesterr, h1, true);
+                Size(loctestnum, loctesterr, h1, true, 0);
+
+                lasd::SetVec<int> v1;
+                InsertC(loctestnum, loctesterr, v1, true, 10);
+                InsertC(loctestnum, loctesterr, v1, true, 1);
+                InsertC(loctestnum, loctesterr, v1, true, 90);
+
+                Traverse(loctestnum, loctesterr, v1, true, &TraversePrint<int>);
                 
-                TraversePreOrder(loctestnum, loctesterr, sv1, true, &TraversePrint<int>);
-                stv3 = sv1;
+
+                lasd::HeapVec<int> h2(v1);
+                Empty(loctestnum, loctesterr, v1, false);
+                Size(loctestnum, loctesterr, v1, false, 0);
+                IsHeap(loctestnum, loctesterr, h2, true);
+                Traverse(loctestnum, loctesterr, h2, true, &TraversePrint<int>);
+                EqualHeapVec(loctestnum, loctesterr, h2, h1, false);
+                NonEqualHeapVec(loctestnum, loctesterr, h2, h1, true);
+
+                v1.Clear();
+                h2.Clear();
+
+                lasd::SetLst<int> lst2;
+
+                InsertAtBack(loctestnum, loctesterr, lst2, true, 1);
+                InsertAtBack(loctestnum, loctesterr, lst2, true, 1000);
+                InsertAtBack(loctestnum, loctesterr, lst2, true, 23);
+                InsertAtBack(loctestnum, loctesterr, lst2, true, 11);
+
+                lasd::HeapVec<int> h3(std::move(lst2));
+
+                Empty(loctestnum, loctesterr, lst2, false);
+                Size(loctestnum, loctesterr, lst2, false, 0);
+                IsHeap(loctestnum, loctesterr, h3, true);
+                Traverse(loctestnum, loctesterr, h3, true, &TraversePrint<int>);
+                EqualHeapVec(loctestnum, loctesterr, h3, h1, false);
+                NonEqualHeapVec(loctestnum, loctesterr, h3, h1, true);
+                Empty(loctestnum, loctesterr, h3, false);
+                Size(loctestnum, loctesterr, h3, true, 4);
+
+                h3.Clear();
+                lst2.Clear();
+
+                InsertAtBack(loctestnum, loctesterr, lst2, true, 1);
+
+                h2 = lst2;
+
+                lasd::HeapVec<int> h4(h2);
+
+                Empty(loctestnum, loctesterr,h4, false);
+                Size(loctestnum, loctesterr,h4, true, 1);
+                IsHeap(loctestnum, loctesterr,h4, true);
+                Traverse(loctestnum, loctesterr,h4, true, &TraversePrint<int>);
+                EqualHeapVec(loctestnum, loctesterr,h4, h2, true);
+                NonEqualHeapVec(loctestnum, loctesterr,h4, h2, false);
+                h4.Clear();
+                Empty(loctestnum, loctesterr,h4, true);
+                Size(loctestnum, loctesterr,h4, true, 0);
+
+                lst2.Clear();
+
+                InsertAtBack(loctestnum, loctesterr, lst2, true, 1000);
+
+                h2.Clear();
+
+                h2 = std::move(lst2);
+
+                lasd::HeapVec<int> h5(std::move(h2));
+                Empty(loctestnum, loctesterr,h5, false);
+                Size(loctestnum, loctesterr,h5, true,1);
+                IsHeap(loctestnum, loctesterr,h5, true);
+                Traverse(loctestnum, loctesterr,h5, true, &TraversePrint<int>);
+                EqualHeapVec(loctestnum, loctesterr,h5, h1, false);
+                NonEqualHeapVec(loctestnum, loctesterr,h5, h1, true);
+                h5.Clear();
+                Empty(loctestnum, loctesterr,h5, true);
+                Size(loctestnum, loctesterr,h5, true, 0);
+
+
+                h1 = h5;
+                EqualHeapVec(loctestnum, loctesterr,h1, h5, true);
+                NonEqualHeapVec(loctestnum, loctesterr,h1, h5, false);
+
+                h2 = std::move(h5);
+                EqualHeapVec(loctestnum, loctesterr,h2, h5, true);
+                EqualHeapVec(loctestnum, loctesterr,h1, h2, true);
+
+                h5.Clear();
+
+                lasd::Vector<int> vec1(5);
+                SetAt(loctestnum, loctesterr, vec1, true, 0, 411);
+                SetAt(loctestnum, loctesterr, vec1, true, 1, 141);
+                SetAt(loctestnum, loctesterr, vec1, true, 2, 129);
+                SetAt(loctestnum, loctesterr, vec1, true, 3, 2115);
+
+                h5 = std::move(vec1);
+
+                h5.Sort();
+                IsHeap(loctestnum, loctesterr, h5, false);
+
+                h5.Clear();
+                vec1.Clear();
+
+                lasd::HeapVec<int> h6;
+                Empty(loctestnum, loctesterr, h6, true);
+                Size(loctestnum, loctesterr, h6, true, 0);
+
+                lasd::List<int> lst3;
+
+                for(int i = 0; i < 10; i++){
+                    InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomInt());
+                }
+
+                h6 = std::move(lst3);
+                IsHeap(loctestnum, loctesterr, h6, true);
+                Traverse(loctestnum, loctesterr, h6, true, &TraversePrint<int>);
+                h6.Sort();
+                IsHeap(loctestnum, loctesterr, h6, false);
+
+                lasd::HeapVec<int> h7(std::move(h6));
+                Empty(loctestnum, loctesterr, h7, false);
+                Size(loctestnum, loctesterr, h7, true, 10);
+
+                IsHeap(loctestnum, loctesterr, h7, false);
+
+                h7.Clear();
+                Empty(loctestnum, loctesterr, h7, true);
+
+                lasd::List<int> lst4;
+                for(int i = 0; i < 10; i++){
+                    InsertAtBack(loctestnum, loctesterr, lst4, true, generateRandomInt());
+                }
+                h7 = std::move(lst4);
+                Map(loctestnum, loctesterr, h7, true, &MyMapPrint<int>);
+                MapPreOrder(loctestnum, loctesterr, h7, true, &MyMapPrint<int>);
+                MapPostOrder(loctestnum, loctesterr, h7, true, &MyMapPrint<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapIncrement<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapDecrement<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapDouble<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapDoubleNPrint<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapIncrementNPrint<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapInvertNPrint<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapInvert<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapHalf<int>);
+                Map(loctestnum, loctesterr, h7, true, &MapParityInvert<int>);
+
+                h7.Clear();
+
+
+
+                lst4.Clear();
+
+                InsertAtBack(loctestnum, loctesterr, lst4, true, 1);
+                InsertAtBack(loctestnum, loctesterr, lst4, true, 2);
+                InsertAtBack(loctestnum, loctesterr, lst4, true, 3);
+                InsertAtBack(loctestnum, loctesterr, lst4, true, 4);
+                InsertAtBack(loctestnum, loctesterr, lst4, true, 5);
+
+                h7 = std::move(lst4);
+
+
+                Fold(loctestnum, loctesterr, h7, true, &FoldAdd<int>, 0, 15);
+                FoldPreOrder(loctestnum, loctesterr, h7, true, &FoldAdd<int>, 0, 15);
+                FoldPostOrder(loctestnum, loctesterr, h7, true, &FoldAdd<int>, 0, 15);
+                Fold(loctestnum, loctesterr, h7, true, &FoldMultiply<int>, 1, 120);
+                FoldPreOrder(loctestnum, loctesterr, h7, true, &FoldMultiply<int>, 1, 120);
+                FoldPostOrder(loctestnum, loctesterr, h7, true, &FoldMultiply<int>, 1, 120);
+                Fold(loctestnum, loctesterr, h7, true, &FoldParity, 0, 1);
+
+
+                h7.Clear();
+
+                //1.Heap da container ordinato
+                lasd::HeapVec<int> h8(4);
+                Empty(loctestnum, loctesterr, h8, false);
+                Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<int>);
+                Size(loctestnum, loctesterr, h8, true, 4);
+                IsHeap(loctestnum, loctesterr, h8, true);
+
+                lasd::Vector<int> vec2(4);
+                SetAt(loctestnum, loctesterr, vec2, true, 0, 1);
+                SetAt(loctestnum, loctesterr, vec2, true, 1, 2);
+                SetAt(loctestnum, loctesterr, vec2, true, 2, 3);
+                SetAt(loctestnum, loctesterr, vec2, true, 3, 4);
+
+                h8 = std::move(vec2);
+
+                Empty(loctestnum, loctesterr, vec2, false);
+                Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<int>);
+                IsHeap(loctestnum, loctesterr, h8, true);
+
+                h8.Clear();
+
+                lasd::SortableVector<int> sv1(4);
+                for(int i = 0; i < 4; i++) {
+                    SetAt(loctestnum, loctesterr, sv1, true, i, generateRandomInt());
+                }
+                Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<int>);
                 sv1.Sort();
-                EqualLinear(loctestnum, loctesterr, stv3, sv1, true);
+                Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<int>);
+                h8 = std::move(sv1);
+                IsHeap(loctestnum, loctesterr, h8, true);
+                Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<int>);
 
-                lasd::SetVec<int> stv5;
+                h8.Sort();
+                IsHeap(loctestnum, loctesterr, h8, false);
+                EqualLinear(loctestnum, loctesterr, h8, sv1, true);
 
-                stv5.Resize(1);
-                Empty(loctestnum, loctesterr, stv5, true);
-
-                stv5.Resize(5);
-                Size(loctestnum, loctesterr, stv5, false, 5);
-                stv5.Resize(3);
-                Size(loctestnum, loctesterr, stv5, false, 3);
-
-                stv5.Resize(0);
-                Min(loctestnum, loctesterr, stv5, false, 0);
-                Max(loctestnum, loctesterr, stv5, false, 0);
-                MinNRemove(loctestnum, loctesterr, stv5, false, 0);
-                MaxNRemove(loctestnum, loctesterr, stv5, false, 0);
-                RemoveMin(loctestnum, loctesterr, stv5, false);
-                RemoveMax(loctestnum, loctesterr, stv5, false);
-                SuccessorNRemove(loctestnum, loctesterr, stv5, false, 0, 0);
-                PredecessorNRemove(loctestnum, loctesterr, stv5, false, 0, 0);
-                Successor(loctestnum, loctesterr, stv5, false, 0, 0);
-                Predecessor(loctestnum, loctesterr, stv5, false, 0, 0);
-                RemoveSuccessor(loctestnum, loctesterr, stv5, false, 0);
-                RemovePredecessor(loctestnum, loctesterr, stv5, false, 0);
-                stv5.Clear();
-                Empty(loctestnum, loctesterr, stv5, true);
-
-                stv5.Resize(10);
-                for(int i = 0; i < 10; i++)
-                {
-                    InsertC(loctestnum,loctesterr,stv5,i+10);
-                };
-                TraversePreOrder(loctestnum, loctesterr, stv5, true, &TraversePrint<int>);
-
-                lasd::SetVec<int> stv10;
-
-                InsertM(loctestnum,loctesterr,stv10,1);
-                InsertM(loctestnum,loctesterr,stv10,2);
-                InsertM(loctestnum,loctesterr,stv10,3);
-                InsertM(loctestnum,loctesterr,stv10,4);
-
-                lasd::SetVec<int> stv11(stv10);
-
-                EqualSetVec(loctestnum,loctesterr,stv10,stv11,true);
-
-                InsertM(loctestnum,loctesterr,stv11,19);
-
-                lasd::SetVec<int> stv12(std::move(stv11));
                 
-                EqualSetVec(loctestnum,loctesterr,stv12,stv11,false);
 
-                InsertC(loctestnum,loctesterr,stv12,222);
+                //2.Heap da container non ordinato e operatore []
+                  lasd::HeapVec<int> h9(5);
+                  Empty(loctestnum, loctesterr, h9, false);
+                  Size(loctestnum, loctesterr, h9, true, 5);
+                    IsHeap(loctestnum, loctesterr, h9, true);
 
-                NonEqualSetVec(loctestnum,loctesterr,stv12,stv11,true);
+                lasd::List<int> lst5;
+                for(int i = 0; i < 5; i++) {
+                    InsertAtBack(loctestnum, loctesterr, lst5, true, i + 1);
+                }
+                h9 = std::move(lst5);
+                Empty(loctestnum, loctesterr, lst5, false);
+                Size(loctestnum, loctesterr, h9, true, 5);
+                IsHeap(loctestnum, loctesterr, h9, true);
+                Traverse(loctestnum, loctesterr, h9, true, &TraversePrint<int>);
+                EqualLinear(loctestnum, loctesterr, h9, lst5, false);
+                h9.Sort();
+                IsHeap(loctestnum, loctesterr, h9, false);
 
+                GetFront(loctestnum, loctesterr, h9, true, 1);
+               GetBack(loctestnum, loctesterr, h9, true, 5);
 
-                stv10.Clear();
-
-                InsertM(loctestnum,loctesterr,stv10,1);
-                InsertM(loctestnum,loctesterr,stv10,2);
-                InsertM(loctestnum,loctesterr,stv10,3);
-                InsertM(loctestnum,loctesterr,stv10,4);
-
-                RemovePredecessor(loctestnum,loctesterr,stv10,true,5);
                
 
+              
 
+                h9.Clear();
+                Empty(loctestnum, loctesterr, h9, true);
+                Size(loctestnum, loctesterr, h9, true, 0);
+                IsHeap(loctestnum, loctesterr, h9, true);
 
+                //Heap vuoto
+                lasd::HeapVec<int> h10;
+                Empty(loctestnum, loctesterr, h10, true);
+                Size(loctestnum, loctesterr, h10, true, 0);
+                IsHeap(loctestnum, loctesterr, h10, true);
+                h10.Sort();
+                IsHeap(loctestnum, loctesterr, h10, true);
+                EqualHeapVec(loctestnum, loctesterr, h10, h1, true);
+                NonEqualHeapVec(loctestnum, loctesterr, h10, h1, false);
+                h10.Clear();
+                Empty(loctestnum, loctesterr, h10, true);
+                Size(loctestnum, loctesterr, h10, true, 0);
 
+                IsHeap(loctestnum, loctesterr, h10, true);
+
+                lasd::Vector<int> vec3;
+                lasd::HeapVec<int> h11(std::move(vec3));
+                Empty(loctestnum, loctesterr, h11, true);
+                Size(loctestnum, loctesterr, h11, true, 0);
+                IsHeap(loctestnum, loctesterr, h11, true);
+
+                //heap con un solo elemento
+                lasd::HeapVec<int> h12(1);
+                Empty(loctestnum, loctesterr, h12, false);
+                Size(loctestnum, loctesterr, h12, true, 1);
+                IsHeap(loctestnum, loctesterr, h12, true);
+
+                lasd::SetVec<int> v2;
+                InsertC(loctestnum, loctesterr, v2, true, 1001);
+                Traverse(loctestnum, loctesterr, v2, true, &TraversePrint<int>);
+                h12 = std::move(v2);
+                Empty(loctestnum, loctesterr, v2, false);
+                Size(loctestnum, loctesterr, v2, true, 1);
+                IsHeap(loctestnum, loctesterr, h12, true);
+                Traverse(loctestnum, loctesterr, h12, true, &TraversePrint<int>);
+                EqualHeapVec(loctestnum, loctesterr, h12, h1, false);
+                NonEqualHeapVec(loctestnum, loctesterr, h12, h1, true);
+                h12.Clear();
+
+                //heap con elementi tutti uguali
+                lasd::HeapVec<int> h13(5);
+                Empty(loctestnum, loctesterr, h13, false);
+                Size(loctestnum, loctesterr, h13, true, 5);
+                IsHeap(loctestnum, loctesterr, h13, true);
+
+                lasd::Vector<int> vec4(5);
+                SetAt(loctestnum, loctesterr, vec4, true, 0, 1);
+                SetAt(loctestnum, loctesterr, vec4, true, 1, 1);
+                SetAt(loctestnum, loctesterr, vec4, true, 2, 1);
+                SetAt(loctestnum, loctesterr, vec4, true, 3, 1);
+                SetAt(loctestnum, loctesterr, vec4, true, 4, 1);
+                h13 = vec4;
+                IsHeap(loctestnum, loctesterr, h13, true);
+                h13.Sort();
+                IsHeap(loctestnum, loctesterr, h13, true);
+
+                // Test operator[] non-const
+                    lasd::HeapVec<int> hp(2);
+
+                    // Test operator[] const
+                    const lasd::HeapVec<int>& const_hp = hp;
+                    std::cout << "Accesso const (index 1): " << const_hp[1] << std::endl;
                 
-
-
-
                 
-
             }catch(...)
             {
                 loctestnum++;
@@ -1617,1126 +600,1635 @@ void testList(unsigned &testnum, unsigned &testerr)
                 cout << endl
                     << "Unmanaged error! " << endl;
             }
-        cout << "End of SetVec<int> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+        cout << "End of Heap<int> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
         testnum += loctestnum;
         testerr += loctesterr;
     }
-
+    
     /* ************************************************************************** */
 
 
 
-    void testSetVecDouble(lasd::Vector<double>& vec, unsigned &testnum, unsigned &testerr){
-        unsigned loctestnum = 0, loctesterr = 0;
-        cout << endl
-                << "Begin of SetVec<Double> Test:" << endl;
-            try
-            {
-                lasd::SetVec<double> stv1(vec);
-                Empty(loctestnum, loctesterr, stv1, false);
-                Size(loctestnum, loctesterr, stv1, true, 1);
-                // Insert front/back e accesso
-                InsertC(loctestnum, loctesterr, stv1, true, 34.2);
-                InsertC(loctestnum, loctesterr, stv1, true, 75.1);
-                InsertC(loctestnum, loctesterr, stv1, true, 1.02);
-                InsertC(loctestnum, loctesterr, stv1, true, 80.2);
-                InsertC(loctestnum, loctesterr, stv1, true, 50.2);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                Size(loctestnum, loctesterr, stv1, true,6);
-
-                lasd::Vector<double> v2(5);
-                Empty(loctestnum, loctesterr, v2, false);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v2, true, i, generateUniqueRandomDouble());
-                }
-                InsertSomeC(loctestnum, loctesterr, stv1, true, v2);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                v2.Clear();
-                stv1.Clear();
-                Empty(loctestnum, loctesterr, stv1, true);
-                Size(loctestnum, loctesterr, stv1, true, 0);
-
-                stv1.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertM(loctestnum, loctesterr, stv1, true, generateRandomDouble());
-                }
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                stv1.Clear();
-                stv1.Resize(2);
-                InsertC(loctestnum, loctesterr, stv1, true, 1.1);
-                InsertC(loctestnum, loctesterr, stv1, true, 890.2);
-
-                stv1.Clear();
-                stv1.Resize(5);
-
-                v2.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v2, true, i, i+1.1);
-                }
-                InsertAllC(loctestnum, loctesterr, stv1, true, v2);
-                lasd::SetVec<double> stv2(v2);
-                EqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                InsertM(loctestnum, loctesterr, stv2, true, 10.0);
-
-                NonEqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                Remove(loctestnum, loctesterr, stv2, true, 1.1);
-                RemoveSome(loctestnum, loctesterr, stv2, true, v2);
-                TraversePreOrder(loctestnum, loctesterr, stv2, true, &TraversePrint<int>);
-
-                InsertSomeC(loctestnum, loctesterr, stv2, true, v2);
-                TraversePreOrder(loctestnum, loctesterr, stv2, true, &TraversePrint<int>);
-                RemoveAll(loctestnum, loctesterr, stv2, true, v2);
-
-                stv1.Clear();
-                stv2.Clear();
-                
-                stv1.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i+1.2);
-                }
-
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-
-                Min(loctestnum, loctesterr, stv1, true, 1.2);
-                Max(loctestnum, loctesterr, stv1, true, 5.2);
-
-                RemoveMin(loctestnum, loctesterr, stv1, true);
-                RemoveMax(loctestnum, loctesterr, stv1, true);
-
-                MinNRemove(loctestnum, loctesterr, stv1, true, 2.2);
-                MaxNRemove(loctestnum, loctesterr, stv1, true, 4.2);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-                Min(loctestnum, loctesterr, stv1, true, 3.2);
-                Max(loctestnum, loctesterr, stv1, true, 3.2);
-
-                stv1.Clear();
-
-                stv1.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i*2.0);
-                }
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                Successor(loctestnum, loctesterr, stv1, true, 2.0,4.0);
-                Predecessor(loctestnum, loctesterr, stv1, true, 2.0,0.0);
-
-                SuccessorNRemove(loctestnum, loctesterr, stv1, true, 2.0,4.0);
-                PredecessorNRemove(loctestnum, loctesterr, stv1, true, 2.0,0.0);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<int>);
-
-                RemoveSuccessor(loctestnum, loctesterr, stv1, true, 2.0);
-                RemovePredecessor(loctestnum, loctesterr, stv1, false, 2.0);
-
-                stv1.Clear();
-                stv1.Resize(5);
-                stv2.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i + 1.0);
-                }  
-                
-                stv1 = stv2;
-                EqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                InsertC(loctestnum, loctesterr, stv2, true, 1.0);
-
-                stv1 = std::move(stv2);
-
-                Empty(loctestnum, loctesterr, stv2, true);
-                EqualSetVec(loctestnum, loctesterr, stv1, stv2, false);
-
-                Exists(loctestnum, loctesterr, stv1, true, 1.0);
-
-                for(double i = 0.0; i < 4; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i*3.1);
-                }  
-
-                for(ulong i = 0; i < stv1.Size() ; i++)
-                {
-                    cout << stv1[i] << " ";
-                }
-                cout<<"\n";
-
-
-                stv1.Clear();
-
-                stv1.Resize(5);
-                for(double i = 0.0; i < 5; i++)
-                {
-                    InsertC(loctestnum, loctesterr, stv1, true, i);
-                }
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<double>);
-                FoldPreOrder(loctestnum, loctesterr, stv1, true, &FoldAdd<double>, 1.0, 11.0);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<double>);
-                FoldPostOrder(loctestnum, loctesterr, stv1, true, &FoldMultiply<double>, 0.0, 0.0);
-
-                lasd::Vector<double> v3(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v3, true, i, generateUniqueRandomDouble());
-                }
-                
-                stv1 = v3;
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<double>);
-                TraversePreOrder(loctestnum, loctesterr, v3, true, &TraversePrint<double>);
-                NonEqualLinear(loctestnum, loctesterr, stv1, v3, true);
-
-                stv1.Clear();
-                v3.Clear();
-
-                stv1.Resize(5);
-                v3.Resize(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v3, true, i, i+1.0);
-                }  
-                stv1 = std::move(v3);
-                EqualLinear(loctestnum, loctesterr, stv1, v3, true);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<double>);
-                NonEqualLinear(loctestnum, loctesterr, stv1, v3, false);
-
-
-                stv1.Clear();
-                v3.Clear();
-
-                v3.Resize(5);
-                stv1.Resize(10);
-
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, v3, true, i, i + 2.5);
-                }
-
-                InsertAllC(loctestnum, loctesterr, stv1, true, v3);
-                TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<double>);
-
-                stv1.Clear();
-                stv1.Resize(5);
-                lasd::SetVec<double> stv90;
-                stv90.Resize(10);
-
-                InsertC(loctestnum, loctesterr, stv1, true, 1.0);
-                InsertC(loctestnum, loctesterr, stv1, true, 2.2);
-                InsertC(loctestnum, loctesterr, stv1, true, 3.3);
-                InsertC(loctestnum, loctesterr, stv1, true, 4.4);
-                InsertC(loctestnum, loctesterr, stv1, true, 5.5);
-
-                InsertC(loctestnum, loctesterr, stv90, true, 1.0);
-                InsertC(loctestnum, loctesterr, stv90, true, 2.2);
-                InsertC(loctestnum, loctesterr, stv90, true, 3.3);
-                InsertC(loctestnum, loctesterr, stv90, true, 4.4);
-                InsertC(loctestnum, loctesterr, stv90, true, 5.5);
-
-                EqualSetVec(loctestnum, loctesterr, stv1, stv90, true);
-
-                lasd::List<double> lst1;
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 1.1);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 2.2);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 35.35);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 31.31);
-                InsertAtBack(loctestnum, loctesterr, lst1, true, 4.4);
-                MapPreOrder(loctestnum, loctesterr, lst1, true, &MyMapPrint<double>);
-                lasd::SetVec<double> stv3(lst1);
-                EqualLinear(loctestnum, loctesterr, stv1, lst1, false);
-                TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<double>);
-
-                lst1.Clear();
-                stv3.Clear();
-
-                InsertAtFront(loctestnum, loctesterr, lst1, true, 1.1);
-                InsertAtFront(loctestnum, loctesterr, lst1, true, 2.2);
-                InsertAtFront(loctestnum, loctesterr, lst1, true, 35.35);
-
-                stv3 = std::move(lst1);
-                EqualLinear(loctestnum, loctesterr, stv1, lst1, false);
-                TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<double>);
-                stv3.Clear();
-                lst1.Clear();
-
-                lasd::SortableVector<double> sv1(5);
-                    SetAt(loctestnum, loctesterr, sv1, true, 0,1.1);
-                    SetAt(loctestnum, loctesterr, sv1, true, 1,222.22);
-                    SetAt(loctestnum, loctesterr, sv1, true, 2,192.55);
-                    SetAt(loctestnum, loctesterr, sv1, true, 3,1731.908);
-                    SetAt(loctestnum, loctesterr, sv1, true, 4,4.23);
-
-                
-                TraversePreOrder(loctestnum, loctesterr, sv1, true, &TraversePrint<double>);
-                stv3 = sv1;
-                sv1.Sort();
-                EqualLinear(loctestnum, loctesterr, stv3, sv1, true);
-
-
-
-            }catch(...)
-            {
-                loctestnum++;
-                loctesterr++;
+        void testHeapDouble(unsigned &testnum, unsigned &testerr){
+                unsigned loctestnum = 0, loctesterr = 0;
                 cout << endl
-                    << "Unmanaged error! " << endl;
+                        << "Begin of Heap<double> Test:" << endl;
+                    try
+                    {
+                            lasd::HeapVec<double> h1;
+                            Empty(loctestnum, loctesterr, h1, true);
+                            Size(loctestnum, loctesterr, h1, true, 0);
+                            IsHeap(loctestnum, loctesterr, h1, true);
+
+                            h1.Sort();
+
+                            IsHeap(loctestnum, loctesterr, h1, true);
+
+                            lasd::List<double> lst1;
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, 1.0);
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, 1000.0);
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, 23.0);
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, 11.0);
+
+                            h1 = lst1;
+                            Empty(loctestnum, loctesterr, h1, false);
+                            Size(loctestnum, loctesterr, h1, false, 0);
+
+                            IsHeap(loctestnum, loctesterr, h1, true);
+
+                            Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<double>);
+
+                            h1.Sort();
+
+                            Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<double>);
+
+                            IsHeap(loctestnum, loctesterr, h1, false);
+
+                            EqualLinear(loctestnum, loctesterr, h1, lst1, false);
+
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, 9002.0);
+
+                            h1 = std::move(lst1);
+                            Empty(loctestnum, loctesterr, lst1, false);
+
+                            IsHeap(loctestnum, loctesterr, h1, true);
+
+                            Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<double>);
+
+                            NonEqualLinear(loctestnum, loctesterr, h1, lst1, true);
+
+                            h1.Clear();
+                            Empty(loctestnum, loctesterr, h1, true);
+                            Size(loctestnum, loctesterr, h1, true, 0);
+
+                            lasd::SetVec<double> v1;
+                            InsertC(loctestnum, loctesterr, v1, true, 10.0);
+                            InsertC(loctestnum, loctesterr, v1, true, 1.0);
+                            InsertC(loctestnum, loctesterr, v1, true, 90.0);
+
+                            Traverse(loctestnum, loctesterr, v1, true, &TraversePrint<double>);
+
+                            lasd::HeapVec<double> h2(v1);
+                            Empty(loctestnum, loctesterr, v1, false);
+                            Size(loctestnum, loctesterr, v1, false, 0);
+                            IsHeap(loctestnum, loctesterr, h2, true);
+                            Traverse(loctestnum, loctesterr, h2, true, &TraversePrint<double>);
+                            EqualHeapVec(loctestnum, loctesterr, h2, h1, false);
+                            NonEqualHeapVec(loctestnum, loctesterr, h2, h1, true);
+
+                            v1.Clear();
+                            h2.Clear();
+
+                            lasd::SetLst<double> lst2;
+
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, 1.0);
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, 1000.0);
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, 23.0);
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, 11.0);
+
+                            lasd::HeapVec<double> h3(std::move(lst2));
+
+                            Empty(loctestnum, loctesterr, lst2, false);
+                            Size(loctestnum, loctesterr, lst2, false, 0);
+                            IsHeap(loctestnum, loctesterr, h3, true);
+                            Traverse(loctestnum, loctesterr, h3, true, &TraversePrint<double>);
+                            EqualHeapVec(loctestnum, loctesterr, h3, h1, false);
+                            NonEqualHeapVec(loctestnum, loctesterr, h3, h1, true);
+                            Empty(loctestnum, loctesterr, h3, false);
+                            Size(loctestnum, loctesterr, h3, true, 4);
+
+                            h3.Clear();
+                            lst2.Clear();
+
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, 1.0);
+
+                            h2 = lst2;
+
+                            lasd::HeapVec<double> h4(h2);
+
+                            Empty(loctestnum, loctesterr, h4, false);
+                            Size(loctestnum, loctesterr, h4, true, 1);
+                            IsHeap(loctestnum, loctesterr, h4, true);
+                            Traverse(loctestnum, loctesterr, h4, true, &TraversePrint<double>);
+                            EqualHeapVec(loctestnum, loctesterr, h4, h2, true);
+                            NonEqualHeapVec(loctestnum, loctesterr, h4, h2, false);
+                            h4.Clear();
+                            Empty(loctestnum, loctesterr, h4, true);
+                            Size(loctestnum, loctesterr, h4, true, 0);
+
+                            lst2.Clear();
+
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, 1000.0);
+
+                            h2.Clear();
+
+                            h2 = std::move(lst2);
+
+                            lasd::HeapVec<double> h5(std::move(h2));
+                            Empty(loctestnum, loctesterr, h5, false);
+                            Size(loctestnum, loctesterr, h5, true, 1);
+                            IsHeap(loctestnum, loctesterr, h5, true);
+                            Traverse(loctestnum, loctesterr, h5, true, &TraversePrint<double>);
+                            EqualHeapVec(loctestnum, loctesterr, h5, h1, false);
+                            NonEqualHeapVec(loctestnum, loctesterr, h5, h1, true);
+                            h5.Clear();
+                            Empty(loctestnum, loctesterr, h5, true);
+                            Size(loctestnum, loctesterr, h5, true, 0);
+
+                            h1 = h5;
+                            EqualHeapVec(loctestnum, loctesterr, h1, h5, true);
+                            NonEqualHeapVec(loctestnum, loctesterr, h1, h5, false);
+
+                            h2 = std::move(h5);
+                            EqualHeapVec(loctestnum, loctesterr, h2, h5, true);
+                            EqualHeapVec(loctestnum, loctesterr, h1, h2, true);
+
+                            h5.Clear();
+
+                            lasd::Vector<double> vec1(5);
+                            SetAt(loctestnum, loctesterr, vec1, true, 0, 411.0);
+                            SetAt(loctestnum, loctesterr, vec1, true, 1, 141.0);
+                            SetAt(loctestnum, loctesterr, vec1, true, 2, 129.0);
+                            SetAt(loctestnum, loctesterr, vec1, true, 3, 2115.0);
+
+                            h5 = std::move(vec1);
+
+                            h5.Sort();
+                            IsHeap(loctestnum, loctesterr, h5, false);
+
+                            lasd::HeapVec<double> h6;
+                            Empty(loctestnum, loctesterr, h6, true);
+                            Size(loctestnum, loctesterr, h6, true, 0);
+
+                            lasd::List<double> lst3;
+
+                            for(int i = 0; i < 10; i++){
+                                InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomDouble());
+                            }
+
+                            h6 = std::move(lst3);
+                            IsHeap(loctestnum, loctesterr, h6, true);
+                            Traverse(loctestnum, loctesterr, h6, true, &TraversePrint<double>);
+                            h6.Sort();
+                            IsHeap(loctestnum, loctesterr, h6, false);
+
+
+                            lasd::List<double> lst4;
+                            for(int i = 0; i < 10; i++){
+                                InsertAtBack(loctestnum, loctesterr, lst4, true, generateRandomDouble());
+                            };
+                            
+                            h6 = std::move(lst4);
+                            Map(loctestnum, loctesterr, h6, true, &MyMapPrint<double>);
+                            MapPreOrder(loctestnum, loctesterr, h6, true, &MyMapPrint<double>);
+                            MapPostOrder(loctestnum, loctesterr, h6, true, &MyMapPrint<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapIncrement<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapDecrement<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapDouble<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapDoubleNPrint<double>);
+
+
+                            h6.Clear();
+
+                            lst4.Clear();
+
+                            InsertAtBack(loctestnum, loctesterr, lst4, true, 1.0);
+                            InsertAtBack(loctestnum, loctesterr, lst4, true, 2.0);
+                            InsertAtBack(loctestnum, loctesterr, lst4, true, 3.0);
+                            InsertAtBack(loctestnum, loctesterr, lst4, true, 4.0);
+                            InsertAtBack(loctestnum, loctesterr, lst4, true, 5.0);
+
+                            h6 = std::move(lst4);
+
+                            Fold(loctestnum, loctesterr, h6, true, &FoldAdd<double>, 0.0, 15.0);
+                            FoldPreOrder(loctestnum, loctesterr, h6, true, &FoldAdd<double>, 0.0, 15.0);
+                            FoldPostOrder(loctestnum, loctesterr, h6, true, &FoldAdd<double>, 0.0, 15.0);
+                            Fold(loctestnum, loctesterr, h6, true, &FoldMultiply<double>, 1.0, 120.0);
+                            FoldPreOrder(loctestnum, loctesterr, h6, true, &FoldMultiply<double>, 1.0, 120.0);
+                            FoldPostOrder(loctestnum, loctesterr, h6, true, &FoldMultiply<double>, 1.0, 120.0);
+
+                            h6.Clear();
+
+
+                            Map(loctestnum, loctesterr, h6, true, &MyMapPrint<double>);
+                            MapPreOrder(loctestnum, loctesterr, h6, true, &MyMapPrint<double>);
+                            MapPostOrder(loctestnum, loctesterr, h6, true, &MyMapPrint<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapIncrement<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapDecrement<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapDouble<double>);
+                            Map(loctestnum, loctesterr, h6, true, &MapDoubleNPrint<double>);
+
+                            //1.Heap da container ordinato
+                            lasd::HeapVec<double> h8(4);
+                            Empty(loctestnum, loctesterr, h8, false);
+                            Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<double>);
+                            Size(loctestnum, loctesterr, h8, true, 4);
+                            IsHeap(loctestnum, loctesterr, h8, true);
+
+                            lasd::Vector<double> vec2(4);
+                            SetAt(loctestnum, loctesterr, vec2, true, 0, 1.0);
+                            SetAt(loctestnum, loctesterr, vec2, true, 1, 2.0);
+                            SetAt(loctestnum, loctesterr, vec2, true, 2, 3.0);
+                            SetAt(loctestnum, loctesterr, vec2, true, 3, 4.0);
+
+                            h8 = std::move(vec2);
+
+                            Empty(loctestnum, loctesterr, vec2, false);
+                            Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<double>);
+                            IsHeap(loctestnum, loctesterr, h8, true);
+
+                            h8.Clear();
+
+                            lasd::SortableVector<double> sv1(4);
+                            for (int i = 0; i < 4; i++) {
+                                SetAt(loctestnum, loctesterr, sv1, true, i, generateUniqueRandomDouble());
+                            }
+                            Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<double>);
+                            sv1.Sort();
+                            Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<double>);
+                            h8 = std::move(sv1);
+                            IsHeap(loctestnum, loctesterr, h8, true);
+                            Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<double>);
+
+                            h8.Sort();
+                            IsHeap(loctestnum, loctesterr, h8, false);
+                            EqualLinear(loctestnum, loctesterr, h8, sv1, true);
+ 
+
+                            //2.Heap da container non ordinato e operatore []
+                            lasd::HeapVec<double> h9(5);
+                            Empty(loctestnum, loctesterr, h9, false);
+                            Size(loctestnum, loctesterr, h9, true, 5);
+                            IsHeap(loctestnum, loctesterr, h9, true);
+
+                            lasd::List<double> lst5;
+                            for (int i = 0; i < 5; i++) {
+                                InsertAtBack(loctestnum, loctesterr, lst5, true, i + 1.0);
+                            }
+                            h9 = std::move(lst5);
+                            Empty(loctestnum, loctesterr, lst5, false);
+                            Size(loctestnum, loctesterr, h9, true, 5);
+                            IsHeap(loctestnum, loctesterr, h9, true);
+                            Traverse(loctestnum, loctesterr, h9, true, &TraversePrint<double>);
+                            EqualLinear(loctestnum, loctesterr, h9, lst5, false);
+                            h9.Sort();
+                            IsHeap(loctestnum, loctesterr, h9, false);
+
+                            GetFront(loctestnum, loctesterr, h9, true, 1.0);
+                            GetBack(loctestnum, loctesterr, h9, true, 5.0);
+
+
+                            h9.Clear();
+                            Empty(loctestnum, loctesterr, h9, true);
+                            Size(loctestnum, loctesterr, h9, true, 0);
+                            IsHeap(loctestnum, loctesterr, h9, true);
+
+                            //Heap vuoto
+                            lasd::HeapVec<double> h10;
+                            Empty(loctestnum, loctesterr, h10, true);
+                            Size(loctestnum, loctesterr, h10, true, 0);
+                            IsHeap(loctestnum, loctesterr, h10, true);
+                            h10.Sort();
+                            IsHeap(loctestnum, loctesterr, h10, true);
+                            EqualHeapVec(loctestnum, loctesterr, h10, h1, true);
+                            NonEqualHeapVec(loctestnum, loctesterr, h10, h1, false);
+                            h10.Clear();
+                            Empty(loctestnum, loctesterr, h10, true);
+                            Size(loctestnum, loctesterr, h10, true, 0);
+                            IsHeap(loctestnum, loctesterr, h10, true);
+
+                            lasd::Vector<double> vec3;
+                            lasd::HeapVec<double> h11(std::move(vec3));
+                            Empty(loctestnum, loctesterr, h11, true);
+                            Size(loctestnum, loctesterr, h11, true, 0);
+                            IsHeap(loctestnum, loctesterr, h11, true);
+
+                            //heap con un solo elemento
+                            lasd::HeapVec<double> h12(1);
+                            Empty(loctestnum, loctesterr, h12, false);
+                            Size(loctestnum, loctesterr, h12, true, 1);
+                            IsHeap(loctestnum, loctesterr, h12, true);
+
+                            lasd::SetVec<double> v2;
+                            InsertC(loctestnum, loctesterr, v2, true, 1001.0);
+                            Traverse(loctestnum, loctesterr, v2, true, &TraversePrint<double>);
+                            h12 = std::move(v2);
+                            Empty(loctestnum, loctesterr, v2, false);
+                            Size(loctestnum, loctesterr, v2, true, 1);
+                            IsHeap(loctestnum, loctesterr, h12, true);
+                            Traverse(loctestnum, loctesterr, h12, true, &TraversePrint<double>);
+                            EqualHeapVec(loctestnum, loctesterr, h12, h1, false);
+                            NonEqualHeapVec(loctestnum, loctesterr, h12, h1, true);
+                            h12.Clear();
+
+                            //heap con elementi tutti uguali
+                            lasd::HeapVec<double> h13(5);
+                            Empty(loctestnum, loctesterr, h13, false);
+                            Size(loctestnum, loctesterr, h13, true, 5);
+                            IsHeap(loctestnum, loctesterr, h13, true);
+
+                            lasd::Vector<double> vec4(5);
+                            SetAt(loctestnum, loctesterr, vec4, true, 0, 1.0);
+                            SetAt(loctestnum, loctesterr, vec4, true, 1, 1.0);
+                            SetAt(loctestnum, loctesterr, vec4, true, 2, 1.0);
+                            SetAt(loctestnum, loctesterr, vec4, true, 3, 1.0);
+                            SetAt(loctestnum, loctesterr, vec4, true, 4, 1.0);
+                            h13 = vec4;
+                            IsHeap(loctestnum, loctesterr, h13, true);
+                            h13.Sort();
+                            IsHeap(loctestnum, loctesterr, h13, true);
+
+                            // Test operator[] non-const
+                            lasd::HeapVec<double> hp(2);
+
+                            // Test operator[] const
+                            const lasd::HeapVec<double>& const_hp = hp;
+                            std::cout << "Accesso const (index 1): " << const_hp[1] << std::endl;
+
+
+                    }catch(...)
+                    {
+                        loctestnum++;
+                        loctesterr++;
+                        cout << endl
+                            << "Unmanaged error! " << endl;
+                    }
+                cout << "End of Heap<double> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+                testnum += loctestnum;
+                testerr += loctesterr;
             }
-        cout << "End of SetVec<Double> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-        testnum += loctestnum;
-        testerr += loctesterr;
-    }
- /* ************************************************************************** */
 
- void testSetVecString(lasd::Vector<string>& vec, unsigned &testnum, unsigned &testerr){
-        unsigned loctestnum = 0, loctesterr = 0;
-        cout << endl
-                << "Begin of SetVec<String> Test:" << endl;
-            try
-            {
-                 // Prepara un Vector<string> di partenza
-                    lasd::Vector<string> vec(5);
-                    for(int i = 0; i < 5; i++) {
-                        // imposto ogni elemento con string("init"+to_string(i))
-                        SetAt(loctestnum, loctesterr, vec, true, i, string("init" + to_string(i)));
-                    }
+    /* ************************************************************************** */
 
-                    // Costruisco un SetVec<string> a partire da vec
-                    lasd::SetVec<string> stv1(vec);
-                    Empty(loctestnum, loctesterr, stv1, false);
-                    Size(loctestnum, loctesterr, stv1, true, 5);
-
-                    // Insert front/back e accesso
-                    InsertC(loctestnum, loctesterr, stv1, true, string("apple"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("banana"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("cherry"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("date"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("elderberry"));
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    Size(loctestnum, loctesterr, stv1, true, 10);
-
-                    // Inserimento di alcuni elementi da un altro Vector<string>
-                    lasd::Vector<string> v2(5);
-                    Empty(loctestnum, loctesterr, v2, false);
-                    for(int i = 0; i < 5; i++) {
-                        SetAt(loctestnum, loctesterr, v2, true, i, string("randU" + to_string(i)));
-                    }
-                    InsertSomeC(loctestnum, loctesterr, stv1, true, v2);
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-
-                    // Clear e nuovo test di Empty/Size
-                    v2.Clear();
-                    stv1.Clear();
-                    Empty(loctestnum, loctesterr, stv1, true);
-                    Size(loctestnum, loctesterr, stv1, true, 0);
-
-                    // Resize + InsertM
-                    stv1.Resize(5);
-                    for(int i = 0; i < 5; i++) {
-                        InsertM(loctestnum, loctesterr, stv1, true, string("mval" + to_string(i)));
-                    }
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-
-                    // Clear, Resize a 2 e due InsertC
-                    stv1.Clear();
-                    stv1.Resize(2);
-                    InsertC(loctestnum, loctesterr, stv1, true, string("one"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("two"));
-
-                    // Clear e Resize a 5
-                    stv1.Clear();
-                    stv1.Resize(5);
-
-                    // Preparo v2 con 5 stringhe e faccio InsertAllC + confronto
-                    v2.Resize(5);
-                    for(int i = 0; i < 5; i++) {
-                        SetAt(loctestnum, loctesterr, v2, true, i, string("v2_" + to_string(i)));
-                    }
-                    InsertAllC(loctestnum, loctesterr, stv1, true, v2);
-                    lasd::SetVec<string> stv2(v2);
-                    EqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                    // Modifico stv2 e confronto nuovamente
-                    InsertM(loctestnum, loctesterr, stv2, true, string("extra"));
-                    NonEqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-
-                    // Rimozioni di singolo e di un insieme, poi stampa
-                    Remove(loctestnum, loctesterr, stv2, true, string("extra"));
-                    RemoveSome(loctestnum, loctesterr, stv2, true, v2);
-                    TraversePreOrder(loctestnum, loctesterr, stv2, true, &TraversePrint<string>);
-
-                    // Reinserisco e poi rimuovo tutto
-                    InsertSomeC(loctestnum, loctesterr, stv2, true, v2);
-                    TraversePreOrder(loctestnum, loctesterr, stv2, true, &TraversePrint<string>);
-                    RemoveAll(loctestnum, loctesterr, stv2, true, v2);
-
-                    // Nuovi test di Min/Max/RemoveMin/RemoveMax
-                    stv1.Clear();
-                    stv2.Clear();
-                    stv1.Resize(5);
-                    for(int i = 0; i < 5; i++) {
-                        InsertC(loctestnum, loctesterr, stv1, true, string("sval" + to_string(i)));
-                    }
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    Min(loctestnum, loctesterr, stv1, true, string("sval0"));
-                    Max(loctestnum, loctesterr, stv1, true, string("sval4"));
-                    RemoveMin(loctestnum, loctesterr, stv1, true);
-                    RemoveMax(loctestnum, loctesterr, stv1, true);
-                    MinNRemove(loctestnum, loctesterr, stv1, true, string("sval1"));
-                    MaxNRemove(loctestnum, loctesterr, stv1, true, string("sval3"));
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    Min(loctestnum, loctesterr, stv1, true, string("sval2"));
-                    Max(loctestnum, loctesterr, stv1, true, string("sval2"));
-
-                    // Test di Successor/Predecessor
-                    stv1.Clear();
-                    stv1.Resize(5);
-                    for(int i = 0; i < 5; i++) {
-                        InsertC(loctestnum, loctesterr, stv1, true, string("item" + to_string(i*2)));
-                    }
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    Successor(loctestnum, loctesterr, stv1, true, string("item2"), string("item4"));
-                    Predecessor(loctestnum, loctesterr, stv1, true, string("item2"), string("item0"));
-                    SuccessorNRemove(loctestnum, loctesterr, stv1, true, string("item2"), string("item4"));
-                    PredecessorNRemove(loctestnum, loctesterr, stv1, true, string("item2"), string("item0"));
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    RemoveSuccessor(loctestnum, loctesterr, stv1, true, string("item2"));
-                    RemovePredecessor(loctestnum, loctesterr, stv1, false, string("item2"));
-
-                    // Assegnazione e move
-                    stv1.Clear();
-                    stv1.Resize(5);
-                    stv2.Resize(5);
-                    for(int i = 0; i < 5; i++) {
-                        InsertC(loctestnum, loctesterr, stv1, true, string("num" + to_string(i+1)));
-                    }
-                    stv1 = stv2;
-                    EqualSetVec(loctestnum, loctesterr, stv1, stv2, true);
-                    InsertC(loctestnum, loctesterr, stv2, true, string("num1"));
-                    stv1 = std::move(stv2);
-                    Empty(loctestnum, loctesterr, stv2, true);
-                    EqualSetVec(loctestnum, loctesterr, stv1, stv2, false);
-
-                    // Exists + stampa con operatore []
-                    Exists(loctestnum, loctesterr, stv1, true, string("num1"));
-                    for(size_t i = 0; i < stv1.Size(); i++) {
-                        cout << stv1[i] << " ";
-                    }
-                    cout << "\n";
-
-                    // Fold e confronto con Vector<string>
-                    stv1.Clear();
-                    stv1.Resize(5);
-                    for(size_t i = 0; i < 5; i++) {
-                        InsertC(loctestnum, loctesterr, stv1, true, string("x" + to_string(i)));
-                    }
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    FoldPreOrder(loctestnum, loctesterr, stv1, true, &FoldStringConcatenate, string(""), string("x0x1x2x3x4"));
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    FoldPostOrder(loctestnum, loctesterr, stv1, true, &FoldStringConcatenate, string(""), string("x4x3x2x1x0"));
-
-                    // Confronto con Vector<string> v3
-                    lasd::Vector<string> v3(5);
-                    for(int i = 0; i < 5; i++) {
-                        SetAt(loctestnum, loctesterr, v3, true, i, string("U" + to_string(i)));
-                    }
-                    stv1 = v3;
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    TraversePreOrder(loctestnum, loctesterr, v3, true, &TraversePrint<string>);
-                    NonEqualLinear(loctestnum, loctesterr, stv1, v3, false);
-
-                    stv1.Clear();
-                    v3.Clear();
-                    stv1.Resize(5);
-                    v3.Resize(5);
-                    for(int i = 0; i < 5; i++) {
-                        SetAt(loctestnum, loctesterr, v3, true, i, string("L" + to_string(i+1)));
-                    }
-                    stv1 = std::move(v3);
-                    EqualLinear(loctestnum, loctesterr, stv1, v3, false);
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-                    NonEqualLinear(loctestnum, loctesterr, stv1, v3, true);
-
-                    // Ultimo test di InsertAllC con capacità ampliata
-                    stv1.Clear();
-                    v3.Clear();
-                    v3.Resize(5);
-                    stv1.Resize(10);
-                    for(int i = 0; i < 5; i++) {
-                        SetAt(loctestnum, loctesterr, v3, true, i, string("O" + to_string(i+2)));
-                    }
-                    InsertAllC(loctestnum, loctesterr, stv1, true, v3);
-                    TraversePreOrder(loctestnum, loctesterr, stv1, true, &TraversePrint<string>);
-
-                    // Confronto finale fra due SetVec<string>
-                    stv1.Clear();
-                    stv1.Resize(5);
-                    lasd::SetVec<string> stv90;
-                    stv90.Resize(10);
-                    InsertC(loctestnum, loctesterr, stv1, true, string("a"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("bb"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("ccc"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("dddd"));
-                    InsertC(loctestnum, loctesterr, stv1, true, string("eeeee"));
-                    InsertC(loctestnum, loctesterr, stv90, true, string("a"));
-                    InsertC(loctestnum, loctesterr, stv90, true, string("bb"));
-                    InsertC(loctestnum, loctesterr, stv90, true, string("ccc"));
-                    InsertC(loctestnum, loctesterr, stv90, true, string("dddd"));
-                    InsertC(loctestnum, loctesterr, stv90, true, string("eeeee"));
-                    EqualSetVec(loctestnum, loctesterr, stv1, stv90, true);
-
-                    // Test di List<string> e conversione a SetVec<string>
-                    lasd::List<string> lst1;
-                    InsertAtBack(loctestnum, loctesterr, lst1, true, string("1.1"));
-                    InsertAtBack(loctestnum, loctesterr, lst1, true, string("2.2"));
-                    InsertAtBack(loctestnum, loctesterr, lst1, true, string("35.35"));
-                    InsertAtBack(loctestnum, loctesterr, lst1, true, string("31.31"));
-                    InsertAtBack(loctestnum, loctesterr, lst1, true, string("4.4"));
-                    MapPreOrder(loctestnum, loctesterr, lst1, true, &MyMapPrint<string>);
-                    lasd::SetVec<string> stv3(lst1);
-                    EqualLinear(loctestnum, loctesterr, stv3, lst1, false);
-                    TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<string>);
-                    lst1.Clear(); stv3.Clear();
-
-                    // Test di move da List<string> a SetVec<string>
-                    InsertAtFront(loctestnum, loctesterr, lst1, true, string("A"));
-                    InsertAtFront(loctestnum, loctesterr, lst1, true, string("B"));
-                    InsertAtFront(loctestnum, loctesterr, lst1, true, string("C"));
-                    stv3 = std::move(lst1);
-                    EqualLinear(loctestnum, loctesterr, stv3, lst1, false);
-                    TraversePreOrder(loctestnum, loctesterr, stv3, true, &TraversePrint<string>);
-                    stv3.Clear(); lst1.Clear();
-
-                    // Test di SortableVector<string>
-                    lasd::SortableVector<string> sv1(5);
-                    SetAt(loctestnum, loctesterr, sv1, true, 0, string("X"));
-                    SetAt(loctestnum, loctesterr, sv1, true, 1, string("Z"));
-                    SetAt(loctestnum, loctesterr, sv1, true, 2, string("Y"));
-                    SetAt(loctestnum, loctesterr, sv1, true, 3, string("W"));
-                    SetAt(loctestnum, loctesterr, sv1, true, 4, string("V"));
-                    TraversePreOrder(loctestnum, loctesterr, sv1, true, &TraversePrint<string>);
-                    stv3 = sv1;
-                    sv1.Sort();
-                    EqualLinear(loctestnum, loctesterr, stv3, sv1, true);
-
-
-            }catch(...)
-            {
-                loctestnum++;
-                loctesterr++;
+    void testHeapString(unsigned &testnum, unsigned &testerr){
+                unsigned loctestnum = 0, loctesterr = 0;
                 cout << endl
-                    << "Unmanaged error! " << endl;
+                        << "Begin of Heap<string> Test:" << endl;
+                    try
+                    {
+
+                        lasd::HeapVec<string> h1;
+                        Empty(loctestnum, loctesterr, h1, true);
+                        Size(loctestnum, loctesterr, h1, true, 0);
+                        IsHeap(loctestnum, loctesterr, h1, true);
+
+                        h1.Sort();
+
+                        IsHeap(loctestnum, loctesterr, h1, true);
+
+                        lasd::List<string> lst1;
+                        InsertAtBack(loctestnum, loctesterr, lst1, true, string("a"));
+                        InsertAtBack(loctestnum, loctesterr, lst1, true, string("z"));
+                        InsertAtBack(loctestnum, loctesterr, lst1, true, string("b"));
+                        InsertAtBack(loctestnum, loctesterr, lst1, true, string("m"));
+
+                        h1 = lst1;
+                        Empty(loctestnum, loctesterr, h1, false);
+                        Size(loctestnum, loctesterr, h1, false, 0);
+
+                        IsHeap(loctestnum, loctesterr, h1, true);
+
+                        Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<string>);
+
+                        h1.Sort();
+
+                        Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<string>);
+
+                        IsHeap(loctestnum, loctesterr, h1, false);
+
+                        EqualLinear(loctestnum, loctesterr, h1, lst1, false);
+
+                        InsertAtBack(loctestnum, loctesterr, lst1, true, string("x"));
+
+                        h1 = std::move(lst1);
+                        Empty(loctestnum, loctesterr, lst1, false);
+
+                        IsHeap(loctestnum, loctesterr, h1, true);
+
+                        Traverse(loctestnum, loctesterr, h1, true, &TraversePrint<string>);
+
+                        NonEqualLinear(loctestnum, loctesterr, h1, lst1, true);
+
+                        h1.Clear();
+                        Empty(loctestnum, loctesterr, h1, true);
+                        Size(loctestnum, loctesterr, h1, true, 0);
+
+                        lasd::SetVec<string> v1;
+                        InsertC(loctestnum, loctesterr, v1, true, string("uno"));
+                        InsertC(loctestnum, loctesterr, v1, true, string("due"));
+                        InsertC(loctestnum, loctesterr, v1, true, string("tre"));
+
+                        Traverse(loctestnum, loctesterr, v1, true, &TraversePrint<string>);
+
+                        lasd::HeapVec<string> h2(v1);
+                        Empty(loctestnum, loctesterr, v1, false);
+                        Size(loctestnum, loctesterr, v1, false, 0);
+                        IsHeap(loctestnum, loctesterr, h2, true);
+                        Traverse(loctestnum, loctesterr, h2, true, &TraversePrint<string>);
+                        EqualHeapVec(loctestnum, loctesterr, h2, h1, false);
+                        NonEqualHeapVec(loctestnum, loctesterr, h2, h1, true);
+
+                        v1.Clear();
+                        h2.Clear();
+
+                        lasd::SetLst<string> lst2;
+
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, string("gatto"));
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, string("cane"));
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, string("lupo"));
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, string("orso"));
+
+                        lasd::HeapVec<string> h3(std::move(lst2));
+
+                        Empty(loctestnum, loctesterr, lst2, false);
+                        Size(loctestnum, loctesterr, lst2, false, 0);
+                        IsHeap(loctestnum, loctesterr, h3, true);
+                        Traverse(loctestnum, loctesterr, h3, true, &TraversePrint<string>);
+                        EqualHeapVec(loctestnum, loctesterr, h3, h1, false);
+                        NonEqualHeapVec(loctestnum, loctesterr, h3, h1, true);
+                        Empty(loctestnum, loctesterr, h3, false);
+                        Size(loctestnum, loctesterr, h3, true, 4);
+
+                        h3.Clear();
+                        lst2.Clear();
+
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, string("koala"));
+
+                        h2 = lst2;
+
+                        lasd::HeapVec<string> h4(h2);
+
+                        Empty(loctestnum, loctesterr, h4, false);
+                        Size(loctestnum, loctesterr, h4, true, 1);
+                        IsHeap(loctestnum, loctesterr, h4, true);
+                        Traverse(loctestnum, loctesterr, h4, true, &TraversePrint<string>);
+                        EqualHeapVec(loctestnum, loctesterr, h4, h2, true);
+                        NonEqualHeapVec(loctestnum, loctesterr, h4, h2, false);
+                        h4.Clear();
+                        Empty(loctestnum, loctesterr, h4, true);
+                        Size(loctestnum, loctesterr, h4, true, 0);
+
+                        lst2.Clear();
+
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, string("zebra"));
+
+                        h2.Clear();
+
+                        h2 = std::move(lst2);
+
+                        lasd::HeapVec<string> h5(std::move(h2));
+                        Empty(loctestnum, loctesterr, h5, false);
+                        Size(loctestnum, loctesterr, h5, true, 1);
+                        IsHeap(loctestnum, loctesterr, h5, true);
+                        Traverse(loctestnum, loctesterr, h5, true, &TraversePrint<string>);
+                        EqualHeapVec(loctestnum, loctesterr, h5, h1, false);
+                        NonEqualHeapVec(loctestnum, loctesterr, h5, h1, true);
+                        h5.Clear();
+                        Empty(loctestnum, loctesterr, h5, true);
+                        Size(loctestnum, loctesterr, h5, true, 0);
+
+                        h1 = h5;
+                        EqualHeapVec(loctestnum, loctesterr, h1, h5, true);
+                        NonEqualHeapVec(loctestnum, loctesterr, h1, h5, false);
+
+                        h2 = std::move(h5);
+                        EqualHeapVec(loctestnum, loctesterr, h2, h5, true);
+                        EqualHeapVec(loctestnum, loctesterr, h1, h2, true);
+
+                        h5.Clear();
+
+                        lasd::Vector<string> vec1(5);
+                        SetAt(loctestnum, loctesterr, vec1, true, 0, string("rosso"));
+                        SetAt(loctestnum, loctesterr, vec1, true, 1, string("verde"));
+                        SetAt(loctestnum, loctesterr, vec1, true, 2, string("blu"));
+                        SetAt(loctestnum, loctesterr, vec1, true, 3, string("giallo"));
+
+                        h5 = std::move(vec1);
+
+                        h5.Sort();
+                        IsHeap(loctestnum, loctesterr, h5, false);
+
+                        h5.Clear();
+
+                        vec1.Clear();
+
+
+                        lasd::HeapVec<string> h6;
+                        Empty(loctestnum, loctesterr, h6, true);
+                        Size(loctestnum, loctesterr, h6, true, 0);
+
+                        lasd::List<string> lst3;
+
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst3, true, generateRandomString(10));
+                        }
+
+                        h6 = std::move(lst3);
+                        IsHeap(loctestnum, loctesterr, h6, true);
+                        Traverse(loctestnum, loctesterr, h6, true, &TraversePrint<string>);
+                        h6.Sort();
+                        IsHeap(loctestnum, loctesterr, h6, false);
+
+                          lasd::List<string> lst4;
+                            for(int i = 0; i < 10; i++){
+                                InsertAtBack(loctestnum, loctesterr, lst4, true, generateRandomString(10));
+                            };
+                            
+                            h6 = std::move(lst4);
+                            Map(loctestnum, loctesterr, h6, true, &MyMapPrint<string>);
+                            MapPreOrder(loctestnum, loctesterr, h6, true, &MyMapPrint<string>);
+                            MapPostOrder(loctestnum, loctesterr, h6, true, &MyMapPrint<string>);
+                            Map(loctestnum, loctesterr, h6, true,[](string &str) { MapStringAppend(str, "<--Hello"); });
+
+
+
+
+                            // 1. Heap da container ordinato
+                            lasd::HeapVec<string> h8(4);
+                            Empty(loctestnum, loctesterr, h8, false);
+                            Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<string>);
+                            Size(loctestnum, loctesterr, h8, true, 4);
+                            IsHeap(loctestnum, loctesterr, h8, true);
+
+                            lasd::Vector<string> vec2(4);
+                            SetAt(loctestnum, loctesterr, vec2, true, 0, string("apple"));
+                            SetAt(loctestnum, loctesterr, vec2, true, 1, string("banana"));
+                            SetAt(loctestnum, loctesterr, vec2, true, 2, string("cherry"));
+                            SetAt(loctestnum, loctesterr, vec2, true, 3, string("date"));
+
+                            h8 = std::move(vec2);
+
+                            Empty(loctestnum, loctesterr, vec2, false);
+                            Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<string>);
+                            IsHeap(loctestnum, loctesterr, h8, true);
+
+                            h8.Clear();
+
+                            lasd::SortableVector<string> sv1(4);
+                            for (int i = 0; i < 4; i++) {
+                                SetAt(loctestnum, loctesterr, sv1, true, i, generateRandomString(6));
+                            }
+                            Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<string>);
+                            sv1.Sort();
+                            Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<string>);
+                            h8 = std::move(sv1);
+                            IsHeap(loctestnum, loctesterr, h8, true);
+                            Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<string>);
+
+                            h8.Sort();
+                            IsHeap(loctestnum, loctesterr, h8, false);
+                            Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<string>);
+                            Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<string>);
+                            EqualLinear(loctestnum, loctesterr, h8, sv1, false);
+
+                            GetFront(loctestnum, loctesterr, h8, false, string("apple"));
+                            GetBack(loctestnum, loctesterr, h8, false, string("date"));
+
+                            // 2. Heap da container non ordinato e operatore []
+                            lasd::HeapVec<string> h9(5);
+                            Empty(loctestnum, loctesterr, h9, false);
+                            Size(loctestnum, loctesterr, h9, true, 5);
+                            IsHeap(loctestnum, loctesterr, h9, true);
+
+                            cout<<"mammffsfsfsadadsad"<<endl;
+
+                            lasd::List<string> lst5;
+                            for (int i = 0; i < 5; i++) {
+                                InsertAtBack(loctestnum, loctesterr, lst5, true, generateRandomString(10));
+                            }
+                            h9 = std::move(lst5);
+                            Empty(loctestnum, loctesterr, lst5, false);
+                            Size(loctestnum, loctesterr, h9, true, 5);
+                            IsHeap(loctestnum, loctesterr, h9, true);
+                                                        cout<<"mammffsfsfsawqeewe123324332324dadsad"<<endl;
+
+                            Traverse(loctestnum, loctesterr, h9, true, &TraversePrint<string>);
+                            EqualLinear(loctestnum, loctesterr, h9, lst5, false);
+                            h9.Sort();
+                            IsHeap(loctestnum, loctesterr, h9, false);
+
+                            GetFront(loctestnum, loctesterr, h9, false, string("a"));
+                            GetBack(loctestnum, loctesterr, h9, false, string("z"));
+                            
+
+                            h9.Clear();
+                            Empty(loctestnum, loctesterr, h9, true);
+                            Size(loctestnum, loctesterr, h9, true, 0);
+                            IsHeap(loctestnum, loctesterr, h9, true);
+
+                            // Heap vuoto
+                            lasd::HeapVec<string> h10;
+                            Empty(loctestnum, loctesterr, h10, true);
+                            Size(loctestnum, loctesterr, h10, true, 0);
+                            IsHeap(loctestnum, loctesterr, h10, true);
+                            h10.Sort();
+                            IsHeap(loctestnum, loctesterr, h10, true);
+                            EqualHeapVec(loctestnum, loctesterr, h10, h1, true);
+                            NonEqualHeapVec(loctestnum, loctesterr, h10, h1, false);
+                            h10.Clear();
+                            Empty(loctestnum, loctesterr, h10, true);
+                            Size(loctestnum, loctesterr, h10, true, 0);
+                            IsHeap(loctestnum, loctesterr, h10, true);
+
+                            lasd::Vector<string> vec3;
+                            lasd::HeapVec<string> h11(std::move(vec3));
+                            Empty(loctestnum, loctesterr, h11, true);
+                            Size(loctestnum, loctesterr, h11, true, 0);
+                            IsHeap(loctestnum, loctesterr, h11, true);
+
+                            // Heap con un solo elemento
+                            lasd::HeapVec<string> h12(1);
+                            Empty(loctestnum, loctesterr, h12, false);
+                            Size(loctestnum, loctesterr, h12, true, 1);
+                            IsHeap(loctestnum, loctesterr, h12, true);
+
+                            lasd::SetVec<string> v2;
+                            InsertC(loctestnum, loctesterr, v2, true, string("single"));
+                            Traverse(loctestnum, loctesterr, v2, true, &TraversePrint<string>);
+                            h12 = std::move(v2);
+                            Empty(loctestnum, loctesterr, v2, false);
+                            Size(loctestnum, loctesterr, v2, true, 1);
+                            IsHeap(loctestnum, loctesterr, h12, true);
+                            Traverse(loctestnum, loctesterr, h12, true, &TraversePrint<string>);
+                            EqualHeapVec(loctestnum, loctesterr, h12, h1, false);
+                            NonEqualHeapVec(loctestnum, loctesterr, h12, h1, true);
+                            h12.Clear();
+
+                            // Heap con elementi tutti uguali
+                            lasd::HeapVec<string> h13(5);
+                            Empty(loctestnum, loctesterr, h13, false);
+                            Size(loctestnum, loctesterr, h13, true, 5);
+                            IsHeap(loctestnum, loctesterr, h13, true);
+
+                            lasd::Vector<string> vec4(5);
+                            for (int i = 0; i < 5; i++) {
+                                SetAt(loctestnum, loctesterr, vec4, true, i, string("same"));
+                            }
+                            h13 = vec4;
+                            IsHeap(loctestnum, loctesterr, h13, true);
+                            h13.Sort();
+                            IsHeap(loctestnum, loctesterr, h13, true);
+
+                            
+                            
+
+                            
+                    }catch(...)
+                    {
+                        loctestnum++;
+                        loctesterr++;
+                        cout << endl
+                            << "Unmanaged error! " << endl;
+                    }
+                cout << "End of Heap<string> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+                testnum += loctestnum;
+                testerr += loctesterr;
             }
-        cout << "End of SetVec<String> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-        testnum += loctestnum;
-        testerr += loctesterr;
-    }
 
-  /* ************************************************************************** */
+    
+    /* ************************************************************************** */
 
-    void testSetListInt(lasd::List<int> & lst, unsigned &testnum, unsigned &testerr){
-        unsigned loctestnum = 0, loctesterr = 0;
-        cout << endl
-                << "Begin of SetList<int> Test:" << endl;
-            try
-            {
-                InsertAtBack(loctestnum,loctesterr,lst,true,1);
-                InsertAtBack(loctestnum,loctesterr,lst,true,1000);
-                InsertAtBack(loctestnum,loctesterr,lst,true,23);
-                InsertAtBack(loctestnum,loctesterr,lst,true,11);
+            void testPQHeapInt(unsigned &testnum, unsigned &testerr){
+                unsigned loctestnum = 0, loctesterr = 0;
+                cout << endl
+                        << "Begin of PQHeap<int> Test:" << endl;
+                    try
+                    {
+                        lasd::PQHeap<int> pqh1;
+                        Empty(loctestnum, loctesterr, pqh1, true);
+                        Size(loctestnum, loctesterr, pqh1, true, 0);
 
-                lasd::SetLst<int> stl1(lst);
-                Empty(loctestnum, loctesterr, stl1, false);
-                Size(loctestnum, loctesterr, stl1, false, 0);
-                // Insert front/back e accesso
-                InsertC(loctestnum, loctesterr, stl1, true, 25);
-                InsertC(loctestnum, loctesterr, stl1, true, 90);
-                InsertC(loctestnum, loctesterr, stl1, false, 1);
-                InsertC(loctestnum, loctesterr, stl1, true, 2);
-                InsertC(loctestnum, loctesterr, stl1, true, 3);
-                TraversePreOrder(loctestnum, loctesterr, stl1, true, &TraversePrint<int>);
-                Size(loctestnum, loctesterr, stl1, true,8);
-            
+                        for(int i = 0; i < 10; i++){
+                            Insert(loctestnum, loctesterr, pqh1, generateRandomInt());
+                        }
 
 
-
-                lasd::SetLst<int> stl2(stl1);
-
-                Empty(loctestnum, loctesterr, stl2, false);
-                Size(loctestnum, loctesterr, stl2, false, 0);
-
-                Size(loctestnum,loctesterr,stl2,true,8);
-
-                for(int i=0; i<8; i++){
-                    InsertM(loctestnum,loctesterr,stl2, i+1);
-                }
-
-                TraversePreOrder(loctestnum, loctesterr, stl2, true, &TraversePrint<int>);
-            
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<int>);
+                        Change(loctestnum, loctesterr, pqh1,true, 0, 1000);
+                        Change(loctestnum, loctesterr, pqh1,true, 1, 500);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<int>);
 
 
-                stl1.Clear();
+                        pqh1.Clear();
 
-                stl1 = std::move(stl2);
-
-                Empty(loctestnum,loctesterr,stl2,true);
-
-                EqualSetLst(loctestnum,loctesterr,stl1,stl2,false);
-                NonEqualList(loctestnum,loctesterr,stl1,stl2,true);
-
-                stl2 = stl1;
-
-                EqualSetLst(loctestnum,loctesterr,stl1,stl2,true);
+                        Empty(loctestnum, loctesterr, pqh1, true);
+                        Size(loctestnum, loctesterr, pqh1, true, 0);
+                        Tip(loctestnum,loctesterr, pqh1, false, 0);
+                        RemoveTip(loctestnum, loctesterr, pqh1, false);
 
 
-                lasd::SetLst<int> stl3(std::move(stl1));
+                        lasd::HeapVec<int> h1;
+                        Empty(loctestnum, loctesterr, h1, true);
+                        Size(loctestnum, loctesterr, h1, true, 0);
 
-                EqualSetLst(loctestnum,loctesterr,stl2,stl3,true);
+                        lasd::List<int> lst1;
+                        for(int i=0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, generateRandomInt());
+                        } 
 
+                        pqh1 = lst1;
+                        Empty(loctestnum, loctesterr, pqh1, false);
+                        Size(loctestnum, loctesterr, pqh1, false, 0);
 
-                stl3.Clear();
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<int>);
 
+                        pqh1.Clear();
 
-                Min(loctestnum,loctesterr,stl2,true,1);
-                RemoveMin(loctestnum,loctesterr,stl2,true);
-                MinNRemove(loctestnum,loctesterr,stl2,true,2);
+                        pqh1 = std::move(lst1);
 
-                Max(loctestnum,loctesterr,stl2,true,1000);
-                RemoveMax(loctestnum,loctesterr,stl2,true);
-                MaxNRemove(loctestnum,loctesterr,stl2,true,90);
+                        Empty(loctestnum, loctesterr, pqh1, false);
 
-                Predecessor(loctestnum,loctesterr,stl2,true,4,3);
-                Predecessor(loctestnum,loctesterr,stl2,false,1,0);
-                RemovePredecessor(loctestnum,loctesterr,stl2,true,4);
-                RemovePredecessor(loctestnum,loctesterr,stl2,false,1);
-                PredecessorNRemove(loctestnum,loctesterr,stl2,true,5,4);
-                PredecessorNRemove(loctestnum,loctesterr,stl2,false,1,0);
-
-                Successor(loctestnum,loctesterr,stl2,true,5,6);
-                Successor(loctestnum,loctesterr,stl2,false,3,4);
-                RemoveSuccessor(loctestnum,loctesterr,stl2,true,5);
-                RemoveSuccessor(loctestnum,loctesterr,stl2,false,10000);
-                SuccessorNRemove(loctestnum,loctesterr,stl2,true,5,7);
-                SuccessorNRemove(loctestnum,loctesterr,stl2,false,10000,999999);
-
-                TraversePreOrder(loctestnum, loctesterr, stl2, true, &TraversePrint<int>);
-
-                Exists(loctestnum,loctesterr,stl2,true,5);
-
-                lasd::Vector<int> vec(3);
-
-                SetAt(loctestnum,loctesterr,vec,true,0,10);
-                SetAt(loctestnum,loctesterr,vec,true,1,14);
-                SetAt(loctestnum,loctesterr,vec,true,2,19);
-
-                lasd::SetLst<int> stl4(vec);
-                TraversePreOrder(loctestnum, loctesterr, stl4, true, &TraversePrint<int>);
-                TraversePreOrder(loctestnum, loctesterr, vec, true, &TraversePrint<int>);
-                EqualLinear(loctestnum,loctesterr,stl4,vec,true);
-
-                lasd::SetLst<int> stl5;
-
-                stl5 = stl4;
-
-                EqualSetLst(loctestnum,loctesterr,stl4,stl5,true);
-
-                cout<<"--------prova operatore ==--------"<<endl;
-                for(int i = 0; i< 3; i++){
-                    if(stl5 == stl4){
-                        cout<<"ciao sono uguali"<<endl;
-                    }
-                }
-
-                InsertM(loctestnum,loctesterr,stl5,2);
-                cout<<"--------prova operatore !=--------"<<endl;
-                int operatore = 0;
-                
-                for(int i = 0; i< 3; i++){
-                    if(stl5 != stl4){
-                        operatore = 1;
-                        break;
-                    }
-                }
-
-                if(operatore == 1){
-                    cout<<"ciao siamo diversi"<<endl;
-                }
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<int>);
 
 
-
-                lasd::SetLst<int> stl7;
-
-                Empty(loctestnum,loctesterr,stl7,true);
-                Size(loctestnum,loctesterr,stl7,true,0);
-
-                Min(loctestnum,loctesterr,stl7,false,1);
-                RemoveMin(loctestnum,loctesterr,stl7,false);
-                MinNRemove(loctestnum,loctesterr,stl7,false,2);
-
-                Max(loctestnum,loctesterr,stl7,false,1000);
-                RemoveMax(loctestnum,loctesterr,stl7,false);
-                MaxNRemove(loctestnum,loctesterr,stl7,false,90);
-
-                Predecessor(loctestnum,loctesterr,stl7,false,4,3);
-                RemovePredecessor(loctestnum,loctesterr,stl7,false,4);
-                PredecessorNRemove(loctestnum,loctesterr,stl7,false,5,4);
-
-                Successor(loctestnum,loctesterr,stl7,false,5,6);
-                RemoveSuccessor(loctestnum,loctesterr,stl7,false,5);
-                SuccessorNRemove(loctestnum,loctesterr,stl7,false,5,7);
+                        pqh1.Clear();  
+                        
+                        cout<<"Insert"<<endl;
 
 
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, 1);
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, 90);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<int>);
 
-                InsertM(loctestnum,loctesterr,stl7, 10);
-                Min(loctestnum,loctesterr,stl7,true,10);
-                Max(loctestnum,loctesterr,stl7,true,10);
-                Predecessor(loctestnum,loctesterr,stl7,false,10,9);
-                Successor(loctestnum,loctesterr,stl7,false,10,11);
-                RemovePredecessor(loctestnum,loctesterr,stl7,false,10);
-                RemoveSuccessor(loctestnum,loctesterr,stl7,false,10);
-                PredecessorNRemove(loctestnum,loctesterr,stl7,false,10,9);
-                SuccessorNRemove(loctestnum,loctesterr,stl7,false,10,11);
+                        Tip(loctestnum,loctesterr, pqh1, true, 90);
+                        RemoveTip(loctestnum, loctesterr, pqh1, true);
+                        TipNRemove(loctestnum, loctesterr, pqh1, true, 1);
+                        
+                        cout<<"Mammto"<<endl;
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, 1000);
+
+                        ChangeMovePQ(loctestnum, loctesterr, pqh1, 0, std::move(92327897),true);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<int>);
+
+                        lasd::PQHeap<int> pqh2(pqh1);
+                        Empty(loctestnum, loctesterr, pqh2, false);
+
+                        Traverse(loctestnum, loctesterr, pqh2, true, &TraversePrint<int>);
+
+                        lasd::PQHeap<int> pqh3(std::move(pqh2));
+                        Empty(loctestnum, loctesterr, pqh2, true);
+                        Size(loctestnum, loctesterr, pqh2, true, 0);
+
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<int>);
+
+                        Change(loctestnum, loctesterr, pqh3,true, 0, 100);
+
+                        ChangeMovePQ(loctestnum, loctesterr, pqh3, 0, std::move(1),true);
+                        cout<<"Mammtowqeqw"<<endl;
+
+                        Insert(loctestnum, loctesterr, pqh3, 1000);
+
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<int>);
+
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh3, 1000, 500, false);
+
+                        pqh3.Clear();
+
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh3, 0, 500, false);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh3, 0, std::move(500), false);
 
 
-                stl7.Clear();
-                lasd::List<int> lst1;
-                InsertAtBack(loctestnum,loctesterr,lst1,true,1);
-                InsertAtBack(loctestnum,loctesterr,lst1,true,100);
-                InsertAtBack(loctestnum,loctesterr,lst1,true,87);
-                InsertAtBack(loctestnum,loctesterr,lst1,true,32);
-
-                lasd::SetLst<int> stl8(lst1);
-                
-                TraversePreOrder(loctestnum, loctesterr, stl8, true, &TraversePrint<int>);
-                TraversePreOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<int>);
-                NonEqualLinear(loctestnum,loctesterr,stl8,lst1,true);
+                        lasd::List<int> lst2;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, generateRandomInt());
+                        }
 
 
-                stl8.Clear(); 
-                
-                lasd::SetLst<int> stl9;
-                lasd::Vector<int> vec1(5);
-                for(int i = 0; i < 5; i++)
-                {
-                    SetAt(loctestnum, loctesterr, vec1, true, i, i);
-                }
-                InsertAllC(loctestnum, loctesterr, stl9, true, vec1);
-                TraversePreOrder(loctestnum, loctesterr, stl9, true, &TraversePrint<int>);
+                        lasd::PQHeap<int> pqh4(std::move(lst2));
 
-                InsertC(loctestnum, loctesterr, stl9, false, 1);
-                InsertC(loctestnum, loctesterr, stl9, false, 2);
-                InsertC(loctestnum, loctesterr, stl9, false, 3);
-                RemoveAll(loctestnum, loctesterr, stl9, true, vec1);
-   
-                for(int i = 0; i < 5; i++)
-                {
+                        pqh3 = pqh4;
+                        Empty(loctestnum, loctesterr, pqh4, false);
+                        Size(loctestnum, loctesterr, pqh4, false, 0);
+
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<int>);
+                        RemoveTip(loctestnum, loctesterr, pqh3, true);
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<int>);
+
+                        pqh3.Clear();
+
+                        pqh3 = std::move(pqh4);
+
+
+                        pqh3.Clear();
+                        pqh4.Clear();
+
+                        lst2.Clear();
+
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, 1);
+
+                        pqh4 = std::move(lst2);
+
+                        Traverse(loctestnum, loctesterr, pqh4, true, &TraversePrint<int>);
+                        Tip(loctestnum,loctesterr, pqh4, true, 1);
+                        TipNRemove(loctestnum, loctesterr, pqh4, true, 1);
+                        Empty(loctestnum, loctesterr, pqh4, true);
+                        Size(loctestnum, loctesterr, pqh4, true, 0);
+
+                        pqh4.Clear();
+                        Exists(loctestnum, loctesterr, pqh4, false, 0);
+
+                        //PQHeap con contenitore ordinato
+                        lasd::SetLst<int> sl1;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, sl1, true, generateUniqueRandomInt());
+                        }
+                        lasd::PQHeap<int> pqh5(10);
+                        Empty(loctestnum, loctesterr, sl1, false);
+                        Size(loctestnum, loctesterr, sl1, true, 10);
+
+                        pqh5 = sl1;
+
+                        Tip(loctestnum, loctesterr, pqh5, true, pqh5.Tip());
+                        RemoveTip(loctestnum, loctesterr, pqh5, true);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<int>);
+                        EqualLinear(loctestnum, loctesterr, pqh5, sl1, false);
+                        NonEqualLinear(loctestnum, loctesterr, pqh5, sl1, true);
+
+                        Empty(loctestnum, loctesterr, sl1, false);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<int>);
+                        
+                        InsertMovePQ(loctestnum, loctesterr, pqh5, 1000);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<int>);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh5, 0, std::move(500), true);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<int>);
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh5, 1000, 500, false);
+                        Exists(loctestnum, loctesterr, pqh5, true, 500);
+
+                        //PQHeap con contenitore non ordinato
+                        lasd::HeapVec<int> h90(sl1);
+                        Empty(loctestnum, loctesterr, h90, false);
+                        Size(loctestnum, loctesterr, h90, true, 10);
+                        IsHeap(loctestnum, loctesterr, h90, true);
+
+                        lasd::PQHeap<int> pqh6(std::move(h90));
+                        Tip(loctestnum,loctesterr, pqh6, true, pqh6.Tip()); 
+                        RemoveTip(loctestnum, loctesterr, pqh6, true);
+                        Traverse(loctestnum, loctesterr, pqh6, true, &TraversePrint<int>);
+                        
+                        Empty(loctestnum, loctesterr, pqh6, false);
+                        Size(loctestnum, loctesterr, pqh6, true, 9);
+                        Exists(loctestnum, loctesterr, pqh6, false, 500);
+                        Traverse(loctestnum, loctesterr, pqh6, true, &TraversePrint<int>);
+
+                        //Test operator[] non-const
+                        const lasd::PQHeap<int>& const_pqh = pqh6;
+                        std::cout << "Accesso const (index 1): " << const_pqh[1] << std::endl;
+
+                        //PQHeap con un solo elemento
+                        lasd::PQHeap<int> pqh7;
+                        lasd::Vector<int> vec1(1);
+                        SetAt(loctestnum, loctesterr, vec1, true, 0, 42);
+                        pqh7 = std::move(vec1);
+                        Empty(loctestnum, loctesterr, pqh7, false);
+                        Size(loctestnum, loctesterr, pqh7, true, 1);
+                        
+                        Exists(loctestnum, loctesterr, pqh7, true, 42);
+                        Tip(loctestnum,loctesterr, pqh7, true, 42);
+                        RemoveTip(loctestnum, loctesterr, pqh7, true);
+                        Empty(loctestnum, loctesterr, pqh7, true);
+                        Size(loctestnum, loctesterr, pqh7, true, 0);
+                        Exists(loctestnum, loctesterr, pqh7, false, 42);
+                        InsertMovePQ(loctestnum, loctesterr, pqh7, 100);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh7, 0, std::move(200), true);
+                        Traverse(loctestnum, loctesterr, pqh7, true, &TraversePrint<int>);
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh7, 200, 300, false);
+                        Exists(loctestnum, loctesterr, pqh7, false, 300);
+                        pqh7.Clear();
+                        
+
+                        //PQHeap con elementi tutti uguali
+                        lasd::PQHeap<int> pqh8(5);
+                        Empty(loctestnum, loctesterr, pqh8, false);
+                        Size(loctestnum, loctesterr, pqh8, true, 5);
+
+                        lasd::Vector<int> vec2(5);
+                        for (int i = 0; i < 5; i++) {
+                            SetAt(loctestnum, loctesterr, vec2, true, i, 42);
+                        }
+                        pqh8 = vec2;
+                        Exists(loctestnum, loctesterr, pqh8, true, 42);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<int>);
+                        Tip(loctestnum,loctesterr, pqh8, true, 42);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<int>);
+                        TipNRemove(loctestnum, loctesterr, pqh8, true, 42);
+                        InsertMovePQ(loctestnum, loctesterr, pqh8, 1000);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<int>);
+
+                        
+                        
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        Empty(loctestnum, loctesterr, pqh8, false);
+                        Size(loctestnum, loctesterr, pqh8, true, 1);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<int>);
+                        InsertMovePQ(loctestnum, loctesterr, pqh8, 1000);
+                        
+                       
+                        
                     
-                    SetAt(loctestnum, loctesterr, vec1, true, i, generateUniqueRandomInt());
-                }
-        
+                        lasd::List<int> lst3;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst3, true, i);
+                        }
+                        
+                        HeapVec<int> heap600(lst3);
+                        GetFront(loctestnum, loctesterr, heap600, true, 9);
+                        GetBack(loctestnum, loctesterr, heap600, true, 1);
+                        Traverse(loctestnum, loctesterr, heap600, true, &TraversePrint<int>);
 
-                TraversePreOrder(loctestnum, loctesterr, vec1, true, &TraversePrint<int>);
+                        PQHeap<int> pqh9(std::move(heap600));
+                        GetFront(loctestnum, loctesterr, pqh9, true, 9);
+                        GetBack(loctestnum, loctesterr, pqh9, true, 1);
 
-                InsertAllC(loctestnum, loctesterr, stl9, true, vec1);
+                        Vector<int> vec400(2);
+                        SetAt(loctestnum, loctesterr, vec400, true, 0, 1);
+                        SetAt(loctestnum, loctesterr, vec400, true, 1, 2);
 
-                TraversePreOrder(loctestnum, loctesterr, stl9, true, &TraversePrint<int>);
+                        HeapVec<int> heap700(std::move(vec400));
+                        GetFront(loctestnum, loctesterr, heap700, true, 2);
+                        GetBack(loctestnum, loctesterr, heap700, true, 1);
+                       
 
-            }catch(...)
-            {
-                loctestnum++;
-                loctesterr++;
-                cout << endl
-                    << "Unmanaged error! " << endl;
+                        Traverse(loctestnum, loctesterr, heap700, true, &TraversePrint<int>);
+
+                        PQHeap<int> pqh10(std::move(heap700));
+                        pqh10.Resize(5);
+                        Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<int>);
+                        Size(loctestnum, loctesterr, pqh10, true, 5);
+                        for(int i = 2; i < 5; i++){
+                            Change(loctestnum, loctesterr, pqh10, true, i, 1000 + i);
+                        }
+
+                        Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<int>);
+
+                        try{
+                            pqh10.Resize(1);
+                            Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<int>);
+                            Size(loctestnum, loctesterr, pqh10, true, 2);
+                            loctestnum++;
+
+                            loctesterr++;
+                        }catch(...){
+                            loctestnum++;
+                            cout << "Resize failed as expected!  --> check Passed" << endl;
+
+                        }
+
+                        //pq vuoto
+                        lasd::PQHeap<int> pqh11;
+                        Empty(loctestnum, loctesterr, pqh11, true);
+                        Size(loctestnum, loctesterr, pqh11, true, 0);
+                        Tip(loctestnum, loctesterr, pqh11, false, 0);
+                        RemoveTip(loctestnum, loctesterr, pqh11, false);
+                        Exists(loctestnum, loctesterr, pqh11, false, 0);
+                        Traverse(loctestnum, loctesterr, pqh11, true, &TraversePrint<int>);
+                        TraversePreOrder(loctestnum, loctesterr, pqh11, true, &TraversePrint<int>);
+                        TraversePostOrder(loctestnum, loctesterr, pqh11, true, &TraversePrint<int>);
+                        GetFront(loctestnum, loctesterr, pqh11, false, 0);
+                        GetBack(loctestnum, loctesterr, pqh11, false, 0);
+                        Change(loctestnum, loctesterr, pqh11, false, 0, 100);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh11, 0, std::move(100), false);
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh11, 0, 100, false);
+                        InsertMovePQ(loctestnum, loctesterr, pqh11, 1);
+                        TipNRemove(loctestnum, loctesterr, pqh11, true, 1);
+                        RemoveTip(loctestnum, loctesterr, pqh11, false);
+                        pqh11.Resize(5);
+                        Empty(loctestnum, loctesterr, pqh11, false);
+                        Size(loctestnum, loctesterr, pqh11, true, 5);
+
+                        
+
+                    }catch(...)
+                    {
+                        loctestnum++;
+                        loctesterr++;
+                        cout << endl
+                            << "Unmanaged error! " << endl;
+                    }
+                cout << "End of PQHeap<int> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+                testnum += loctestnum;
+                testerr += loctesterr;
             }
-        cout << "End of SetList<int> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-        testnum += loctestnum;
-        testerr += loctesterr;
-    }
-
-  /* ************************************************************************** */
-
-void testSetListDouble(lasd::List<double> & lst, unsigned &testnum, unsigned &testerr){
-        unsigned loctestnum = 0, loctesterr = 0;
-        cout << endl
-                << "Begin of SetList<double> Test:" << endl;
-            try
-            {
-                InsertAtBack(loctestnum,loctesterr,lst,true,1.1);
-                InsertAtBack(loctestnum,loctesterr,lst,true,999.9);
-                InsertAtBack(loctestnum,loctesterr,lst,true,23.7);
-                InsertAtBack(loctestnum,loctesterr,lst,true,11.5);
-
-                lasd::SetLst<double> stl1(lst);
-                Empty(loctestnum, loctesterr, stl1, false);
-                Size(loctestnum, loctesterr, stl1, false, 0);
-                // Insert front/back e accesso
-                InsertC(loctestnum, loctesterr, stl1, true, 25.3);
-                InsertC(loctestnum, loctesterr, stl1, true, 90.8);
-                InsertC(loctestnum, loctesterr, stl1, true, 1.2);
-                InsertC(loctestnum, loctesterr, stl1, true, 2.4);
-                InsertC(loctestnum, loctesterr, stl1, true, 3.9);
-                TraversePreOrder(loctestnum, loctesterr, stl1, true, &TraversePrint<double>);
-                Size(loctestnum, loctesterr, stl1, true, 9);
-
-                
-
-                lasd::SetLst<double> stl2(stl1);
-
-                Empty(loctestnum, loctesterr, stl2, false);
-                Size(loctestnum, loctesterr, stl2, false, 0);
-
-                Size(loctestnum,loctesterr,stl2,true,9);
-
-                for(int i=0; i<8; i++){
-                    InsertM(loctestnum,loctesterr,stl2, i + 1.5);
-                }
-
-                TraversePreOrder(loctestnum, loctesterr, stl2, true, &TraversePrint<double>);
-               
-
-                stl1.Clear();
-
-                stl1 = std::move(stl2);
-
-                Empty(loctestnum,loctesterr,stl2,true);
-
-                EqualSetLst(loctestnum,loctesterr,stl1,stl2,false);
-                NonEqualList(loctestnum,loctesterr,stl1,stl2,true);
-
-                stl2 = stl1;
-
-                EqualSetLst(loctestnum,loctesterr,stl1,stl2,true);
-
-                lasd::SetLst<double> stl3(std::move(stl1));
-
-                EqualSetLst(loctestnum,loctesterr,stl2,stl3,true);
-
-                stl3.Clear();
-
-                Min(loctestnum,loctesterr,stl2,true,1.1);
-                RemoveMin(loctestnum,loctesterr,stl2,true);
-                MinNRemove(loctestnum,loctesterr,stl2,true,1.2);
-
-                Max(loctestnum,loctesterr,stl2,true,999.9);
-                RemoveMax(loctestnum,loctesterr,stl2,true);
-                MaxNRemove(loctestnum,loctesterr,stl2,true,90.8);
-
-                Predecessor(loctestnum,loctesterr,stl2,true,4.0,3.9);
-                Predecessor(loctestnum,loctesterr,stl2,false,1.1,0.0);
-                RemovePredecessor(loctestnum,loctesterr,stl2,true,4.0);
-                RemovePredecessor(loctestnum,loctesterr,stl2,false,1.1);
-                PredecessorNRemove(loctestnum,loctesterr,stl2,true,5.0,4.5);
-                PredecessorNRemove(loctestnum,loctesterr,stl2,false,1.1,0.0);
-
-                Successor(loctestnum,loctesterr,stl2,true,5.0,5.5);
-                Successor(loctestnum,loctesterr,stl2,false,3.3,4.4);
-                RemoveSuccessor(loctestnum,loctesterr,stl2,true,5.0);
-                RemoveSuccessor(loctestnum,loctesterr,stl2,false,10000.0);
-                SuccessorNRemove(loctestnum,loctesterr,stl2,true,5.0,6.5);
-                SuccessorNRemove(loctestnum,loctesterr,stl2,false,10000.0,999999.9);
-
-                TraversePreOrder(loctestnum, loctesterr, stl2, true, &TraversePrint<double>);
-
-                Exists(loctestnum,loctesterr,stl2,false,5.0);
-
-                lasd::Vector<double> vec(3);
-
-                SetAt(loctestnum,loctesterr,vec,true,0,10.1);
-                SetAt(loctestnum,loctesterr,vec,true,1,14.6);
-                SetAt(loctestnum,loctesterr,vec,true,2,19.9);
-
-                lasd::SetLst<double> stl4(vec);
-                TraversePreOrder(loctestnum, loctesterr, stl4, true, &TraversePrint<double>);
-                TraversePreOrder(loctestnum, loctesterr, vec, true, &TraversePrint<double>);
-                EqualLinear(loctestnum,loctesterr,stl4,vec,true);
-
-                lasd::SetLst<double> stl5;
-
-                stl5 = stl4;
-
-                EqualSetLst(loctestnum,loctesterr,stl4,stl5,true);
-
-                cout<<"--------prova operatore ==--------"<<endl;
-                for(int i = 0; i< 3; i++){
-                    if(stl5 == stl4){
-                        cout<<"ciao sono uguali"<<endl;
-                    }
-                }
-
-                InsertM(loctestnum,loctesterr,stl5,2.7);
-                cout<<"--------prova operatore !=--------"<<endl;
-                int operatore = 0;
-
-                for(int i = 0; i< 3; i++){
-                    if(stl5 != stl4){
-                        operatore = 1;
-                        break;
-                    }
-                }
-
-                if(operatore == 1){
-                    cout<<"ciao siamo diversi"<<endl;
-                }
-
-                lasd::SetLst<double> stl7;
-
-                Empty(loctestnum,loctesterr,stl7,true);
-                Size(loctestnum,loctesterr,stl7,true,0);
-
-                Min(loctestnum,loctesterr,stl7,false,1.0);
-                RemoveMin(loctestnum,loctesterr,stl7,false);
-                MinNRemove(loctestnum,loctesterr,stl7,false,2.0);
-
-                Max(loctestnum,loctesterr,stl7,false,1000.0);
-                RemoveMax(loctestnum,loctesterr,stl7,false);
-                MaxNRemove(loctestnum,loctesterr,stl7,false,90.0);
-
-                Predecessor(loctestnum,loctesterr,stl7,false,4.0,3.0);
-                RemovePredecessor(loctestnum,loctesterr,stl7,false,4.0);
-                PredecessorNRemove(loctestnum,loctesterr,stl7,false,5.0,4.0);
-
-                Successor(loctestnum,loctesterr,stl7,false,5.0,7.0);
-                RemoveSuccessor(loctestnum,loctesterr,stl7,false,5.0);
-                SuccessorNRemove(loctestnum,loctesterr,stl7,false,5.0,7.0);
-
-                InsertM(loctestnum,loctesterr,stl7, 10.5);
-                Min(loctestnum,loctesterr,stl7,true,10.5);
-                Max(loctestnum,loctesterr,stl7,true,10.5);
-                Predecessor(loctestnum,loctesterr,stl7,false,10.5,9.8);
-                Successor(loctestnum,loctesterr,stl7,false,10.5,11.1);
-                RemovePredecessor(loctestnum,loctesterr,stl7,false,10.5);
-                RemoveSuccessor(loctestnum,loctesterr,stl7,false,10.5);
-                PredecessorNRemove(loctestnum,loctesterr,stl7,false,10.5,9.8);
-                SuccessorNRemove(loctestnum,loctesterr,stl7,false,10.5,11.1);
-
-                stl7.Clear();
-                lasd::List<double> lst1;
-                InsertAtBack(loctestnum,loctesterr,lst1,true,1.7);
-                InsertAtBack(loctestnum,loctesterr,lst1,true,100.4);
-                InsertAtBack(loctestnum,loctesterr,lst1,true,87.3);
-                InsertAtBack(loctestnum,loctesterr,lst1,true,32.9);
-
-                lasd::SetLst<double> stl8(lst1);
-
-                TraversePreOrder(loctestnum, loctesterr, stl8, true, &TraversePrint<double>);
-                TraversePreOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<double>);
-                NonEqualLinear(loctestnum,loctesterr,stl8,lst1,true);
+    /* ************************************************************************** */
 
 
-
-            }catch(...)
-            {
-                loctestnum++;
-                loctesterr++;
+            void testPQHeapDouble(unsigned &testnum, unsigned &testerr){
+                unsigned loctestnum = 0, loctesterr = 0;
                 cout << endl
-                    << "Unmanaged error! " << endl;
+                        << "Begin of PQHeap<double> Test:" << endl;
+                    try
+                    {
+                        lasd::PQHeap<double> pqh1;
+                        Empty(loctestnum, loctesterr, pqh1, true);
+                        Size(loctestnum, loctesterr, pqh1, true, 0);
+
+                        for(int i = 0; i < 10; i++){
+                            Insert(loctestnum, loctesterr, pqh1, generateRandomDouble());
+                        }
+
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<double>);
+                        Change(loctestnum, loctesterr, pqh1,true, 0, 1000.0);
+                        Change(loctestnum, loctesterr, pqh1,true, 1, 500.0);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<double>);
+
+                        pqh1.Clear();
+
+                        Empty(loctestnum, loctesterr, pqh1, true);
+                        Size(loctestnum, loctesterr, pqh1, true, 0);
+                        Tip(loctestnum, loctesterr, pqh1, false, 0.0);
+                        RemoveTip(loctestnum, loctesterr, pqh1, false);
+
+                        lasd::HeapVec<double> h1;
+                        Empty(loctestnum, loctesterr, h1, true);
+                        Size(loctestnum, loctesterr, h1, true, 0);
+
+                        lasd::List<double> lst1;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, generateRandomDouble());
+                        } 
+
+                        pqh1 = lst1;
+                        Empty(loctestnum, loctesterr, pqh1, false);
+                        Size(loctestnum, loctesterr, pqh1, false, 0);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<double>);
+
+                        pqh1.Clear();
+                        pqh1 = std::move(lst1);
+                        Empty(loctestnum, loctesterr, pqh1, false);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<double>);
+
+                        pqh1.Clear();  
+
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, 1.0);
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, 90.0);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<double>);
+
+                        Tip(loctestnum, loctesterr, pqh1, true, 90.0);
+                        RemoveTip(loctestnum, loctesterr, pqh1, true);
+                        TipNRemove(loctestnum, loctesterr, pqh1, true, 1.0);
+
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, 1000.0);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh1, 0, std::move(92327897.0), true);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<double>);
+
+                        lasd::PQHeap<double> pqh2(pqh1);
+                        Empty(loctestnum, loctesterr, pqh2, false);
+                        Traverse(loctestnum, loctesterr, pqh2, true, &TraversePrint<double>);
+
+                        lasd::PQHeap<double> pqh3(std::move(pqh2));
+                        Empty(loctestnum, loctesterr, pqh2, true);
+                        Size(loctestnum, loctesterr, pqh2, true, 0);
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<double>);
+
+                        Change(loctestnum, loctesterr, pqh3,true, 0, 100.0);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh3, 0, std::move(1.0), true);
+                        Insert(loctestnum, loctesterr, pqh3, 1000.0);
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<double>);
+
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh3, 1000.0, 500.0, false);
+
+                        pqh3.Clear();
+
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh3, 0.0, 500.0, false);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh3, 0, std::move(500.0), false);
+
+                        lasd::List<double> lst2;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, generateRandomDouble());
+                        }
+
+                        lasd::PQHeap<double> pqh4(std::move(lst2));
+
+                        pqh3 = pqh4;
+                        Empty(loctestnum, loctesterr, pqh4, false);
+                        Size(loctestnum, loctesterr, pqh4, false, 0);
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<double>);
+
+                        RemoveTip(loctestnum, loctesterr, pqh3, true);
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<double>);
+
+                        pqh3.Clear();
+                        pqh3 = std::move(pqh4);
+
+                        pqh3.Clear();
+                        pqh4.Clear();
+
+                        lst2.Clear();
+
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, 1.0);
+
+                        pqh4 = std::move(lst2);
+
+                        Traverse(loctestnum, loctesterr, pqh4, true, &TraversePrint<double>);
+                        Tip(loctestnum, loctesterr, pqh4, true, 1.0);
+                        TipNRemove(loctestnum, loctesterr, pqh4, true, 1.0);
+                        Empty(loctestnum, loctesterr, pqh4, true);
+                        Size(loctestnum, loctesterr, pqh4, true, 0);
+
+
+
+                        //PQHeap con contenitore ordinato
+                        lasd::SetLst<double> sl1;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, sl1, true, generateUniqueRandomDouble());
+                        }
+                        lasd::PQHeap<double> pqh5(10);
+                        Empty(loctestnum, loctesterr, sl1, false);
+                        Size(loctestnum, loctesterr, sl1, true, 10);
+
+                        pqh5 = sl1;
+
+                        Tip(loctestnum, loctesterr, pqh5, true, pqh5.Tip());
+                        RemoveTip(loctestnum, loctesterr, pqh5, true);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<double>);
+                        EqualLinear(loctestnum, loctesterr, pqh5, sl1, false);
+                        NonEqualLinear(loctestnum, loctesterr, pqh5, sl1, true);
+
+                        Empty(loctestnum, loctesterr, sl1, false);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<double>);
+
+                        InsertMovePQ(loctestnum, loctesterr, pqh5, 1000.0);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<double>);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh5, 0, std::move(500.0), true);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<double>);
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh5, 1000.0, 500.0, false);
+                        Exists(loctestnum, loctesterr, pqh5, true, 500.0);
+
+                        //PQHeap con contenitore non ordinato
+                        lasd::HeapVec<double> h90(sl1);
+                        Empty(loctestnum, loctesterr, h90, false);
+                        Size(loctestnum, loctesterr, h90, true, 10);
+                        IsHeap(loctestnum, loctesterr, h90, true);
+
+                        lasd::PQHeap<double> pqh6(std::move(h90));
+                        Tip(loctestnum, loctesterr, pqh6, true, pqh6.Tip()); 
+                        RemoveTip(loctestnum, loctesterr, pqh6, true);
+                        Traverse(loctestnum, loctesterr, pqh6, true, &TraversePrint<double>);
+
+                        Empty(loctestnum, loctesterr, pqh6, false);
+                        Size(loctestnum, loctesterr, pqh6, true, 9);
+                        Exists(loctestnum, loctesterr, pqh6, false, 500.0);
+                        Traverse(loctestnum, loctesterr, pqh6, true, &TraversePrint<double>);
+
+                        //Test operator[] non-const
+                        const lasd::PQHeap<double>& const_pqh = pqh6;
+                        std::cout << "Accesso const (index 1): " << const_pqh[1] << std::endl;
+
+                        //PQHeap con un solo elemento
+                        lasd::PQHeap<double> pqh7;
+                        lasd::Vector<double> vec1(1);
+                        SetAt(loctestnum, loctesterr, vec1, true, 0, 42.0);
+                        pqh7 = std::move(vec1);
+                        Empty(loctestnum, loctesterr, pqh7, false);
+                        Size(loctestnum, loctesterr, pqh7, true, 1);
+
+                        Exists(loctestnum, loctesterr, pqh7, true, 42.0);
+                        Tip(loctestnum, loctesterr, pqh7, true, 42.0);
+                        RemoveTip(loctestnum, loctesterr, pqh7, true);
+                        Empty(loctestnum, loctesterr, pqh7, true);
+                        Size(loctestnum, loctesterr, pqh7, true, 0);
+                        Exists(loctestnum, loctesterr, pqh7, false, 42.0);
+                        InsertMovePQ(loctestnum, loctesterr, pqh7, 100.0);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh7, 0, std::move(200.0), true);
+                        Traverse(loctestnum, loctesterr, pqh7, true, &TraversePrint<double>);
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh7, 200.0, 300.0, false);
+                        Exists(loctestnum, loctesterr, pqh7, false, 300.0);
+                        pqh7.Clear();
+
+                        //PQHeap con elementi tutti uguali
+                        lasd::PQHeap<double> pqh8(5);
+                        Empty(loctestnum, loctesterr, pqh8, false);
+                        Size(loctestnum, loctesterr, pqh8, true, 5);
+
+                        lasd::Vector<double> vec2(5);
+                        for (int i = 0; i < 5; i++) {
+                            SetAt(loctestnum, loctesterr, vec2, true, i, 42.0);
+                        }
+                        pqh8 = vec2;
+                        Exists(loctestnum, loctesterr, pqh8, true, 42.0);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<double>);
+                        Tip(loctestnum, loctesterr, pqh8, true, 42.0);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<double>);
+                        TipNRemove(loctestnum, loctesterr, pqh8, true, 42.0);
+                        InsertMovePQ(loctestnum, loctesterr, pqh8, 1000.0);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<double>);
+
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        Empty(loctestnum, loctesterr, pqh8, false);
+                        Size(loctestnum, loctesterr, pqh8, true, 1);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<double>);
+                        InsertMovePQ(loctestnum, loctesterr, pqh8, 1000.0);
+
+                        lasd::List<double> lst3;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst3, true, static_cast<double>(i));
+                        }
+
+                        HeapVec<double> heap600(lst3);
+                        GetFront(loctestnum, loctesterr, heap600, true, 9.0);
+                        GetBack(loctestnum, loctesterr, heap600, true, 1.0);
+                        
+                        Traverse(loctestnum, loctesterr, heap600, true, &TraversePrint<double>);
+
+                        PQHeap<double> pqh9(std::move(heap600));
+                        GetFront(loctestnum, loctesterr, pqh9, true, 9.0);
+                        GetBack(loctestnum, loctesterr, pqh9, true, 1.0);
+
+                        Vector<double> vec400(2);
+                        SetAt(loctestnum, loctesterr, vec400, true, 0, 1.0);
+                        SetAt(loctestnum, loctesterr, vec400, true, 1, 2.0);
+
+                        HeapVec<double> heap700(std::move(vec400));
+                        GetFront(loctestnum, loctesterr, heap700, true, 2.0);
+                        GetBack(loctestnum, loctesterr, heap700, true, 1.0);
+
+                        Traverse(loctestnum, loctesterr, heap700, true, &TraversePrint<double>);
+
+                        PQHeap<double> pqh10(std::move(heap700));
+                        pqh10.Resize(5);
+                        Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<double>);
+                        Size(loctestnum, loctesterr, pqh10, true, 5);
+                        for(int i = 2; i < 5; i++){
+                            Change(loctestnum, loctesterr, pqh10, true, i, 1000.0 + i);
+                        }
+
+                        Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<double>);
+
+                        try {
+                            pqh10.Resize(1);
+                            Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<double>);
+                            Size(loctestnum, loctesterr, pqh10, true, 2);
+                            loctestnum++;
+                            loctesterr++;
+                        } catch (...) {
+                            loctestnum++;
+                            cout << "Resize failed as expected!  --> check Passed" << endl;
+                        }
+
+                        //pq vuoto
+                        lasd::PQHeap<double> pqh11;
+                        Empty(loctestnum, loctesterr, pqh11, true);
+                        Size(loctestnum, loctesterr, pqh11, true, 0);
+                        Tip(loctestnum, loctesterr, pqh11, false, 0.0);
+                        RemoveTip(loctestnum, loctesterr, pqh11, false);
+                        Exists(loctestnum, loctesterr, pqh11, false, 0.0);
+                        Traverse(loctestnum, loctesterr, pqh11, true, &TraversePrint<double>);
+                        TraversePreOrder(loctestnum, loctesterr, pqh11, true, &TraversePrint<double>);
+                        TraversePostOrder(loctestnum, loctesterr, pqh11, true, &TraversePrint<double>);
+                        GetFront(loctestnum, loctesterr, pqh11, false, 0.0);
+                        GetBack(loctestnum, loctesterr, pqh11, false, 0.0);
+                        Change(loctestnum, loctesterr, pqh11, false, 0, 100.0);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh11, 0, std::move(100.0), false);
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh11, 0, 100.0, false);
+                        InsertMovePQ(loctestnum, loctesterr, pqh11, 1.0);
+                        TipNRemove(loctestnum, loctesterr, pqh11, true, 1.0);
+                        RemoveTip(loctestnum, loctesterr, pqh11, false);
+                        pqh11.Resize(5);
+                        Empty(loctestnum, loctesterr, pqh11, false);
+                        Size(loctestnum, loctesterr, pqh11, true, 5);
+
+
+
+
+                    }catch(...)
+                    {
+                        loctestnum++;
+                        loctesterr++;
+                        cout << endl
+                            << "Unmanaged error! " << endl;
+                    }
+                cout << "End of PQHeap<double> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+                testnum += loctestnum;
+                testerr += loctesterr;
             }
-        cout << "End of SetList<double> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-        testnum += loctestnum;
-        testerr += loctesterr;
-    }
 
-  /*  ************************************************************************** */
+    /* ************************************************************************** */
 
-  void testSetListString(lasd::List<string> & lst, unsigned &testnum, unsigned &testerr){
-        unsigned loctestnum = 0, loctesterr = 0;
-        cout << endl
-                << "Begin of SetList<double> Test:" << endl;
-            try
-            {
-                InsertAtBack(loctestnum, loctesterr, lst, true, string("mela"));
-                InsertAtBack(loctestnum, loctesterr, lst, true, string("banana"));
-                InsertAtBack(loctestnum, loctesterr, lst, true, string("kiwi"));
-                InsertAtBack(loctestnum, loctesterr, lst, true, string("ananas"));
-
-                lasd::SetLst<string> stl1(lst);
-                Empty(loctestnum, loctesterr, stl1, false);
-                Size(loctestnum, loctesterr, stl1, false, 0);
-
-                InsertC(loctestnum, loctesterr, stl1, true, string("fragola"));
-                InsertC(loctestnum, loctesterr, stl1, true, string("uva"));
-                InsertC(loctestnum, loctesterr, stl1, false, string("mela"));
-                InsertC(loctestnum, loctesterr, stl1, true, string("ciliegia"));
-                InsertC(loctestnum, loctesterr, stl1, true, string("pesca"));
-
-                TraversePreOrder(loctestnum, loctesterr, stl1, true, &TraversePrint<string>);
-                Size(loctestnum, loctesterr, stl1, true, 8);
-
-               
-
-                lasd::SetLst<string> stl2(stl1);
-                Empty(loctestnum, loctesterr, stl2, false);
-                Size(loctestnum, loctesterr, stl2, false, 0);
-                Size(loctestnum, loctesterr, stl2, true, 8);
-
-                for(int i = 0; i < 8; i++){
-                    InsertM(loctestnum, loctesterr, stl2, string("valore") + to_string(i));
-                }
-
-                TraversePreOrder(loctestnum, loctesterr, stl2, true, &TraversePrint<string>);
-              
-
-                stl1.Clear();
-                stl1 = std::move(stl2);
-
-                Empty(loctestnum, loctesterr, stl2, true);
-                EqualSetLst(loctestnum, loctesterr, stl1, stl2, false);
-                NonEqualList(loctestnum, loctesterr, stl1, stl2, true);
-
-                stl2 = stl1;
-                EqualSetLst(loctestnum, loctesterr, stl1, stl2, true);
-
-                lasd::SetLst<string> stl3(std::move(stl1));
-                EqualSetLst(loctestnum, loctesterr, stl2, stl3, true);
-
-                stl3.Clear();
-
-                Min(loctestnum, loctesterr, stl2, true, string("ananas"));
-                RemoveMin(loctestnum, loctesterr, stl2, true);
-                MinNRemove(loctestnum, loctesterr, stl2, true, string("banana"));
-
-                Max(loctestnum, loctesterr, stl2, true, string("valore7"));
-                RemoveMax(loctestnum, loctesterr, stl2, true);
-                MaxNRemove(loctestnum, loctesterr, stl2, true, string("valore6"));
-
-                Predecessor(loctestnum, loctesterr, stl2, false, string("ciliegia"), string("banana"));
-                Predecessor(loctestnum, loctesterr, stl2, false, string("ananas"), string(""));
-                RemovePredecessor(loctestnum, loctesterr, stl2, false, string("ciliegia"));
-                RemovePredecessor(loctestnum, loctesterr, stl2, false, string("ananas"));
-                PredecessorNRemove(loctestnum, loctesterr, stl2, true, string("pesca"), string("mela"));
-                PredecessorNRemove(loctestnum, loctesterr, stl2, false, string("ananas"), string(""));
-
-                Successor(loctestnum, loctesterr, stl2, true, string("banana"), string("ciliegia"));
-                Successor(loctestnum, loctesterr, stl2, false, string("valore7"), string("valore8"));
-                RemoveSuccessor(loctestnum, loctesterr, stl2, true, string("banana"));
-                RemoveSuccessor(loctestnum, loctesterr, stl2, false, string("zucchina"));
-                SuccessorNRemove(loctestnum, loctesterr, stl2, true, string("banana"), string("fragola"));
-                SuccessorNRemove(loctestnum, loctesterr, stl2, false, string("zucchina"), string(""));
-
-                TraversePreOrder(loctestnum, loctesterr, stl2, true, &TraversePrint<string>);
-                Exists(loctestnum, loctesterr, stl2, true, string("pesca"));
-
-                lasd::Vector<string> vec(3);
-                SetAt(loctestnum, loctesterr, vec, true, 0, string("limone"));
-                SetAt(loctestnum, loctesterr, vec, true, 1, string("pera"));
-                SetAt(loctestnum, loctesterr, vec, true, 2, string("cocco"));
-
-                lasd::SetLst<string> stl4(vec);
-                TraversePreOrder(loctestnum, loctesterr, stl4, true, &TraversePrint<string>);
-                TraversePreOrder(loctestnum, loctesterr, vec, true, &TraversePrint<string>);
-                NonEqualLinear(loctestnum, loctesterr, stl4, vec, true);
-
-                lasd::SetLst<string> stl5;
-                stl5 = stl4;
-                EqualSetLst(loctestnum, loctesterr, stl4, stl5, true);
-
-                cout << "--------prova operatore ==--------" << endl;
-                for(int i = 0; i < 3; i++){
-                    if(stl5 == stl4){
-                        cout << "ciao sono uguali" << endl;
-                    }
-                }
-
-                InsertM(loctestnum, loctesterr, stl5, string("pera"));
-                cout << "--------prova operatore !=--------" << endl;
-                int operatore = 0;
-                for(int i = 0; i < 3; i++){
-                    if(stl5 != stl4){
-                        operatore = 1;
-                        break;
-                    }
-                }
-                if(operatore == 1){
-                    cout << "ciao siamo diversi" << endl;
-                }
-
-                lasd::SetLst<string> stl7;
-                Empty(loctestnum, loctesterr, stl7, true);
-                Size(loctestnum, loctesterr, stl7, true, 0);
-
-                Min(loctestnum, loctesterr, stl7, false, string("a"));
-                RemoveMin(loctestnum, loctesterr, stl7, false);
-                MinNRemove(loctestnum, loctesterr, stl7, false, string("b"));
-
-                Max(loctestnum, loctesterr, stl7, false, string("z"));
-                RemoveMax(loctestnum, loctesterr, stl7, false);
-                MaxNRemove(loctestnum, loctesterr, stl7, false, string("y"));
-
-                Predecessor(loctestnum, loctesterr, stl7, false, string("mango"), string("lime"));
-                RemovePredecessor(loctestnum, loctesterr, stl7, false, string("mango"));
-                PredecessorNRemove(loctestnum, loctesterr, stl7, false, string("mango"), string("lime"));
-
-                Successor(loctestnum, loctesterr, stl7, false, string("mango"), string("melone"));
-                RemoveSuccessor(loctestnum, loctesterr, stl7, false, string("mango"));
-                SuccessorNRemove(loctestnum, loctesterr, stl7, false, string("mango"), string("melone"));
-
-                InsertM(loctestnum, loctesterr, stl7, string("melograno"));
-                Min(loctestnum, loctesterr, stl7, true, string("melograno"));
-                Max(loctestnum, loctesterr, stl7, true, string("melograno"));
-                Predecessor(loctestnum, loctesterr, stl7, false, string("melograno"), string("melone"));
-                Successor(loctestnum, loctesterr, stl7, false, string("melograno"), string("menta"));
-                RemovePredecessor(loctestnum, loctesterr, stl7, false, string("melograno"));
-                RemoveSuccessor(loctestnum, loctesterr, stl7, false, string("melograno"));
-                PredecessorNRemove(loctestnum, loctesterr, stl7, false, string("melograno"), string("melone"));
-                SuccessorNRemove(loctestnum, loctesterr, stl7, false, string("melograno"), string("menta"));
-
-                stl7.Clear();
-                lasd::List<string> lst1;
-                InsertAtBack(loctestnum, loctesterr, lst1, true, string("mango"));
-                InsertAtBack(loctestnum, loctesterr, lst1, true, string("cocomero"));
-                InsertAtBack(loctestnum, loctesterr, lst1, true, string("fico"));
-                InsertAtBack(loctestnum, loctesterr, lst1, true, string("papaya"));
-
-                lasd::SetLst<string> stl8(lst1);
-
-                TraversePreOrder(loctestnum, loctesterr, stl8, true, &TraversePrint<string>);
-                TraversePreOrder(loctestnum, loctesterr, lst1, true, &TraversePrint<string>);
-                NonEqualLinear(loctestnum, loctesterr, stl8, lst1, true);
-
-
-                
-
-            }catch(...)
-            {
-                loctestnum++;
-                loctesterr++;
+            void testPQHeapString(unsigned &testnum, unsigned &testerr){
+                unsigned loctestnum = 0, loctesterr = 0;
                 cout << endl
-                    << "Unmanaged error! " << endl;
+                        << "Begin of PQHeap<string> Test:" << endl;
+                    try
+                    {
+                        lasd::PQHeap<string> pqh1;
+                        Empty(loctestnum, loctesterr, pqh1, true);
+                        Size(loctestnum, loctesterr, pqh1, true, 0);
+
+                        for(int i = 0; i < 10; i++){
+                            Insert(loctestnum, loctesterr, pqh1, generateRandomString(10));
+                        }
+
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<string>);
+                        Change(loctestnum, loctesterr, pqh1,true, 0, string("Cambiato0"));
+                        Change(loctestnum, loctesterr, pqh1,true, 1, string("Cambiato1"));
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<string>);
+
+                        pqh1.Clear();
+
+                        Empty(loctestnum, loctesterr, pqh1, true);
+                        Size(loctestnum, loctesterr, pqh1, true, 0);
+                        Tip(loctestnum, loctesterr, pqh1, false, string(""));
+                        RemoveTip(loctestnum, loctesterr, pqh1, false);
+
+                        lasd::HeapVec<string> h1;
+                        Empty(loctestnum, loctesterr, h1, true);
+                        Size(loctestnum, loctesterr, h1, true, 0);
+
+                        lasd::List<string> lst1;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst1, true, generateRandomString(10));
+                        }
+
+                        pqh1 = lst1;
+                        Empty(loctestnum, loctesterr, pqh1, false);
+                        Size(loctestnum, loctesterr, pqh1, false, 0);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<string>);
+
+                        pqh1.Clear();
+                        pqh1 = move(lst1);
+
+                        Empty(loctestnum, loctesterr, pqh1, false);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<string>);
+
+                        pqh1.Clear();
+
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, string("uno"));
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, string("novanta"));
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<string>);
+
+                        Tip(loctestnum, loctesterr, pqh1, true, string("uno"));
+                        RemoveTip(loctestnum, loctesterr, pqh1, true);
+                        TipNRemove(loctestnum, loctesterr, pqh1, true, string("novanta"));
+
+                        InsertMovePQ(loctestnum, loctesterr, pqh1, string("mille"));
+                        ChangeMovePQ(loctestnum, loctesterr, pqh1, 0, move(string("cambiato_finale")), true);
+                        Traverse(loctestnum, loctesterr, pqh1, true, &TraversePrint<string>);
+
+                        lasd::PQHeap<string> pqh2(pqh1);
+                        Empty(loctestnum, loctesterr, pqh2, false);
+                        Traverse(loctestnum, loctesterr, pqh2, true, &TraversePrint<string>);
+
+                        lasd::PQHeap<string> pqh3(move(pqh2));
+                        Empty(loctestnum, loctesterr, pqh2, true);
+                        Size(loctestnum, loctesterr, pqh2, true, 0);
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<string>);
+
+                        Change(loctestnum, loctesterr, pqh3,true, 0, string("cento"));
+                        ChangeMovePQ(loctestnum, loctesterr, pqh3, 0, move(string("uno")), true);
+                        Insert(loctestnum, loctesterr, pqh3, string("mille"));
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<string>);
+
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh3, 0, string("cinquecento"), true);
+                        pqh3.Clear();
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh3, 0, string("cinquecento"), false);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh3, 0, move(string("cinquecento")), false);
+
+                        lasd::List<string> lst2;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst2, true, generateRandomString(10));
+                        }
+
+                        lasd::PQHeap<string> pqh4(move(lst2));
+                        pqh3 = pqh4;
+                        Empty(loctestnum, loctesterr, pqh4, false);
+                        Size(loctestnum, loctesterr, pqh4, false, 0);
+
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<string>);
+                        RemoveTip(loctestnum, loctesterr, pqh3, true);
+                        Traverse(loctestnum, loctesterr, pqh3, true, &TraversePrint<string>);
+
+                        pqh3.Clear();
+                        pqh3 = move(pqh4);
+                        pqh3.Clear();
+                        pqh4.Clear();
+                        lst2.Clear();
+
+                        InsertAtBack(loctestnum, loctesterr, lst2, true, string("uno"));
+                        pqh4 = move(lst2);
+
+                        Traverse(loctestnum, loctesterr, pqh4, true, &TraversePrint<string>);
+                        Tip(loctestnum, loctesterr, pqh4, true, string("uno"));
+                        TipNRemove(loctestnum, loctesterr, pqh4, true, string("uno"));
+                        Empty(loctestnum, loctesterr, pqh4, true);
+                        Size(loctestnum, loctesterr, pqh4, true, 0);
+
+                        
+
+                        // PQHeap con contenitore ordinato
+                        lasd::SetLst<string> sl1;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, sl1, true, generateRandomString(10));
+                        }
+                        lasd::PQHeap<string> pqh5(10);
+                        Empty(loctestnum, loctesterr, sl1, false);
+                        Size(loctestnum, loctesterr, sl1, true, 10);
+
+                        pqh5 = sl1;
+
+                        Tip(loctestnum, loctesterr, pqh5, true, pqh5.Tip());
+                        RemoveTip(loctestnum, loctesterr, pqh5, true);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<string>);
+                        EqualLinear(loctestnum, loctesterr, pqh5, sl1, false);
+                        NonEqualLinear(loctestnum, loctesterr, pqh5, sl1, true);
+
+                        Empty(loctestnum, loctesterr, sl1, false);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<string>);
+
+                        InsertMovePQ(loctestnum, loctesterr, pqh5, string("uno"));
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<string>);
+                        ChangeMovePQ(loctestnum, loctesterr, pqh5, 0, std::move(string("due")), true);
+                        Traverse(loctestnum, loctesterr, pqh5, true, &TraversePrint<string>);
+                        Exists(loctestnum, loctesterr, pqh5, true, string("due"));
+
+                        // PQHeap con contenitore non ordinato
+                        lasd::HeapVec<string> h90(sl1);
+                        Empty(loctestnum, loctesterr, h90, false);
+                        Size(loctestnum, loctesterr, h90, true, 10);
+                        IsHeap(loctestnum, loctesterr, h90, true);
+
+                        lasd::PQHeap<string> pqh6(std::move(h90));
+                        Tip(loctestnum, loctesterr, pqh6, true, pqh6.Tip()); 
+                        RemoveTip(loctestnum, loctesterr, pqh6, true);
+                        Traverse(loctestnum, loctesterr, pqh6, true, &TraversePrint<string>);
+
+                        Empty(loctestnum, loctesterr, pqh6, false);
+                        Size(loctestnum, loctesterr, pqh6, true, 9);
+                        Exists(loctestnum, loctesterr, pqh6, false, string("due"));
+                        Traverse(loctestnum, loctesterr, pqh6, true, &TraversePrint<string>);
+
+                        // Test operator[] non-const
+                        const lasd::PQHeap<string>& const_pqh = pqh6;
+                        cout << "Accesso const (index 1): " << const_pqh[1] << endl;
+
+                        // PQHeap con un solo elemento
+                        lasd::PQHeap<string> pqh7;
+                        lasd::Vector<string> vec1(1);
+                        SetAt(loctestnum, loctesterr, vec1, true, 0, string("ciao"));
+                        pqh7 = std::move(vec1);
+                        Empty(loctestnum, loctesterr, pqh7, false);
+                        Size(loctestnum, loctesterr, pqh7, true, 1);
+
+                        Exists(loctestnum, loctesterr, pqh7, true, string("ciao"));
+                        Tip(loctestnum, loctesterr, pqh7, true, string("ciao"));
+                        RemoveTip(loctestnum, loctesterr, pqh7, true);
+                        Empty(loctestnum, loctesterr, pqh7, true);
+                        Size(loctestnum, loctesterr, pqh7, true, 0);
+                        Exists(loctestnum, loctesterr, pqh7, false, string("ciao"));
+                        InsertMovePQ(loctestnum, loctesterr, pqh7, string("gatto"));
+                        ChangeMovePQ(loctestnum, loctesterr, pqh7, 0, std::move(string("cane")), true);
+                        Traverse(loctestnum, loctesterr, pqh7, true, &TraversePrint<string>);
+                        Exists(loctestnum, loctesterr, pqh7, false, string("cavallo"));
+                        pqh7.Clear();
+
+                        // PQHeap con elementi tutti uguali
+                        lasd::PQHeap<string> pqh8(5);
+                        Empty(loctestnum, loctesterr, pqh8, false);
+                        Size(loctestnum, loctesterr, pqh8, true, 5);
+
+                        lasd::Vector<string> vec2(5);
+                        for (int i = 0; i < 5; i++) {
+                            SetAt(loctestnum, loctesterr, vec2, true, i, string("ripeti"));
+                        }
+                        pqh8 = vec2;
+                        Exists(loctestnum, loctesterr, pqh8, true, string("ripeti"));
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<string>);
+                        Tip(loctestnum, loctesterr, pqh8, true, string("ripeti"));
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<string>);
+                        TipNRemove(loctestnum, loctesterr, pqh8, true, string("ripeti"));
+                        InsertMovePQ(loctestnum, loctesterr, pqh8, string("nuovo"));
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<string>);
+
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        RemoveTip(loctestnum, loctesterr, pqh8, true);
+                        Empty(loctestnum, loctesterr, pqh8, false);
+                        Size(loctestnum, loctesterr, pqh8, true, 1);
+                        Traverse(loctestnum, loctesterr, pqh8, true, &TraversePrint<string>);
+                        InsertMovePQ(loctestnum, loctesterr, pqh8, string("altro"));
+
+                        lasd::List<string> lst3;
+                        for(int i = 0; i < 10; i++){
+                            InsertAtBack(loctestnum, loctesterr, lst3, true, string("valore") + to_string(i));
+                        }
+
+                        HeapVec<string> heap600(lst3);
+                        GetFront(loctestnum, loctesterr, heap600, true, string("valore9"));
+                        GetBack(loctestnum, loctesterr, heap600, true, string("valore1"));
+                        Traverse(loctestnum, loctesterr, heap600, true, &TraversePrint<string>);
+
+                        PQHeap<string> pqh9(std::move(heap600));
+                        GetFront(loctestnum, loctesterr, pqh9, true, string("valore9"));
+                        GetBack(loctestnum, loctesterr, pqh9, true, string("valore1"));
+
+                        Vector<string> vec400(2);
+                        SetAt(loctestnum, loctesterr, vec400, true, 0, string("alfa"));
+                        SetAt(loctestnum, loctesterr, vec400, true, 1, string("beta"));
+
+                        HeapVec<string> heap700(std::move(vec400));
+                        GetFront(loctestnum, loctesterr, heap700, true, string("beta"));
+                        GetBack(loctestnum, loctesterr, heap700, true, string("alfa"));
+
+                        Traverse(loctestnum, loctesterr, heap700, true, &TraversePrint<string>);
+
+                        PQHeap<string> pqh10(std::move(heap700));
+                        pqh10.Resize(5);
+                        Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<string>);
+                        Size(loctestnum, loctesterr, pqh10, true, 5);
+                        for(int i = 2; i < 5; i++){
+                            Change(loctestnum, loctesterr, pqh10, true, i, string("extra") + to_string(i));
+                        }
+
+                        Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<string>);
+
+                        try {
+                            pqh10.Resize(1);
+                            Traverse(loctestnum, loctesterr, pqh10, true, &TraversePrint<string>);
+                            Size(loctestnum, loctesterr, pqh10, true, 2);
+                            loctestnum++;
+                            loctesterr++;
+                        } catch (...) {
+                            loctestnum++;
+                            cout << "Resize failed as expected!  --> check Passed" << endl;
+                        }
+
+                        // pq vuoto
+                        lasd::PQHeap<string> pqh11;
+                        Empty(loctestnum, loctesterr, pqh11, true);
+                        Size(loctestnum, loctesterr, pqh11, true, 0);
+                        Tip(loctestnum, loctesterr, pqh11, false, string(""));
+                        RemoveTip(loctestnum, loctesterr, pqh11, false);
+                        Exists(loctestnum, loctesterr, pqh11, false, string(""));
+                        Traverse(loctestnum, loctesterr, pqh11, true, &TraversePrint<string>);
+                        TraversePreOrder(loctestnum, loctesterr, pqh11, true, &TraversePrint<string>);
+                        TraversePostOrder(loctestnum, loctesterr, pqh11, true, &TraversePrint<string>);
+                        GetFront(loctestnum, loctesterr, pqh11, false, string(""));
+                        GetBack(loctestnum, loctesterr, pqh11, false, string(""));
+                        Change(loctestnum, loctesterr, pqh11, false, 0, string("start"));
+                        ChangeMovePQ(loctestnum, loctesterr, pqh11, 0, std::move(string("start")), false);
+                        ChangeCopyPQ(loctestnum, loctesterr, pqh11, 0, string("start"), false);
+                        InsertMovePQ(loctestnum, loctesterr, pqh11, string("inizio"));
+                        TipNRemove(loctestnum, loctesterr, pqh11, true, string("inizio"));
+                        RemoveTip(loctestnum, loctesterr, pqh11, false);
+                        pqh11.Resize(5);
+                        Empty(loctestnum, loctesterr, pqh11, false);
+                        Size(loctestnum, loctesterr, pqh11, true, 5);
+
+
+                        
+
+
+
+
+
+
+                    }catch(...)
+                    {
+                        loctestnum++;
+                        loctesterr++;
+                        cout << endl
+                            << "Unmanaged error! " << endl;
+                    }
+                cout << "End of PQHeap<string> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+                testnum += loctestnum;
+                testerr += loctesterr;
             }
-        cout << "End of SetList<string> Test! (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
-        testnum += loctestnum;
-        testerr += loctesterr;
-    }
-   
 
-  /* ************************************************************************** */
-    void testSet(unsigned &testnum, unsigned &testerr){
+
+
+    /* ************************************************************************** */
+
+    void testHeap(unsigned &testnum, unsigned &testerr){
         unsigned loctestnum = 0, loctesterr = 0;
-        lasd::Vector<int> v1(5);
-        testSetVecInt(v1,loctestnum, loctesterr);
-        lasd::Vector<double> v2(5);
-        testSetVecDouble(v2,loctestnum,loctesterr);
-        lasd::Vector<string> v3(5);
-        testSetVecString(v3,loctestnum,loctesterr);
-
-
-        lasd::List<int> lst1;
-        testSetListInt(lst1,loctestnum,loctesterr);
-        lasd::List<double> lst2;
-        testSetListDouble(lst2,loctestnum,loctesterr);
-        lasd::List<string> lst3;
-        testSetListString(lst3,loctestnum,loctesterr);
-
+        testHeapInt(loctestnum, loctesterr);
+        testHeapDouble(loctestnum, loctesterr);
+       testHeapString(loctestnum, loctesterr);
         testnum += loctestnum;
         testerr += loctesterr;
         cout << endl
-             << "Exercise 1 - Set (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+             << "Exercise 2 - Heap (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
 
     }
+    
+    /* ************************************************************************** */
+
+
+    void testPQHeap(unsigned &testnum, unsigned &testerr){
+         unsigned loctestnum = 0, loctesterr = 0;
+          testPQHeapInt(loctestnum, loctesterr);
+          testPQHeapDouble(loctestnum, loctesterr);
+        testPQHeapString(loctestnum, loctesterr);
+        testnum += loctestnum;
+        testerr += loctesterr;
+        cout << endl
+             << "Exercise 2 - PQheap (Errors/Tests: " << loctesterr << "/" << loctestnum << ")" << endl;
+      }
+
     /* ************************************************************************** */
 void mytest()
 {
@@ -2746,20 +2238,19 @@ void mytest()
     uint stestnum = 0, stesterr = 0;
 
     loctestnum = 0; loctesterr = 0;
-    testVector(loctestnum, loctesterr);
+    testHeap(loctestnum, loctesterr);
     stestnum += loctestnum; stesterr += loctesterr;
 
     loctestnum = 0; loctesterr = 0;
-    testList(loctestnum, loctesterr);
-    stestnum += loctestnum; stesterr += loctesterr;
-
-    loctestnum = 0; loctesterr = 0;
-    testSet(loctestnum, loctesterr);
+    testPQHeap(loctestnum, loctesterr);
     stestnum += loctestnum; stesterr += loctesterr;
 
 
-    cout << endl << "Exercise 1 (MyTest) (Errors/Tests: " << stesterr << "/" << stestnum << ")";
+    cout << endl << "Exercise 2 (MyTest) (Errors/Tests: " << stesterr << "/" << stestnum << ")";
 
     cout << endl << "Goodbye!" << endl;
 }
-}
+
+    /* ************************************************************************** */
+
+} // namespace mytest

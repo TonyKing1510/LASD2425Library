@@ -26,7 +26,6 @@ protected:
 
   using Container::size;
   Data *elem = nullptr;
-  using MutableLinearContainer<Data>::operator[];
 
   // ...
 
@@ -110,7 +109,7 @@ protected:
 /* ************************************************************************** */
 
 template <typename Data>
-class SortableVector : virtual public Vector<Data>,
+class SortableVector : public Vector<Data>,
                      virtual public SortableLinearContainer<Data> {
   // Must extend Vector<Data>,
   //             SortableLinearContainer<Data>
@@ -124,13 +123,16 @@ protected:
   using Container::size;
   using Vector<Data>::operator[];
   
+  
 
   // ...
 
 public:
 
   // Default constructor
-  SortableVector() = default;
+  SortableVector() :   Vector<Data>() {
+    // Default constructor of Vector<Data> is called
+  }
 
   /* ************************************************************************ */
 

@@ -12,11 +12,13 @@ bool LinearContainer<Data>::operator==(const LinearContainer<Data>& container) c
     
     // Se i due contenitori sono lo stesso oggetto (stesso indirizzo di memoria), sono sicuramente uguali
     if (this == &container) {
+      
         return true;
     }
 
     // Se le dimensioni sono diverse, i contenitori non possono essere uguali
     if (this->size != container.Size()) {
+    
         return false;
     }
 

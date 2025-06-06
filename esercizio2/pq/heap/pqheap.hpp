@@ -26,14 +26,17 @@ private:
 protected:
 
   using Container::size; // Number of elements in the container
-
+  ulong capacity = 0; // Capacity of the heap (not strictly necessary, but useful for efficiency)
+  using HeapVec<Data>::operator[]; // Access to the elements of the heap
+  using HeapVec<Data>::Front; 
+  using HeapVec<Data>::Back; 
 
   // ...
 
 public:
 
-  // Default constructor
   PQHeap() = default;
+
 
   /* ************************************************************************ */
 
@@ -77,11 +80,33 @@ public:
   void Change(ulong, const Data&) override; // Override PQ member (Copy of the value)
   void Change(ulong, Data&&) override; // Override PQ member (Move of the value)
 
-protected:
+  void Clear() noexcept;
 
-  // Auxiliary functions, if necessary!
-  void Clear() noexcept override; // Override ClearableContainer member (clear the vector) 
+  inline const Data &operator[](ulong index) const override
+    {
+      return HeapVec<Data>::operator[](index);
+    }
+    using HeapVec<Data>::HeapVec; // Inherit constructors from HeapVec<Data>
+  inline const Data &Front() const override
+    {
+      return HeapVec<Data>::Front(); // Access to the first element of the heap
+    }
+  inline const Data &Back() const override
+    {
+      return HeapVec<Data>::Back(); // Access to the last element of the heap
+    }
+
+  void Resize(ulong newSize) override; // Resize the heap (inherited from ResizableContainer)
+
+
+
+
+
+protected:
   void UpHeap(ulong index); // Move the element at index up to restore the heap property
+  inline void DownHeap(ulong index) noexcept {
+    this->Heapify(index); // Use the inherited Heapify method to restore the heap property
+  }
 
 };
 

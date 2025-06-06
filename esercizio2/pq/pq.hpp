@@ -14,7 +14,7 @@ namespace lasd {
 
 template <typename Data>
 class PQ : virtual public LinearContainer<Data>,
-           public ClearableContainer {
+           virtual public ClearableContainer {
   // Must extend LinearContainer<Data>,
   //             ClearableContainer
 
@@ -48,6 +48,8 @@ public:
 
   virtual void Change(ulong, const Data&) = 0; // Copy of the value
   virtual void Change(ulong, Data&&) = 0; // Move of the value
+
+  virtual void Clear() override = 0; // (concrete function should not throw exceptions)
 
 };
 

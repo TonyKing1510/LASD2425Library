@@ -173,22 +173,22 @@ lasd::Vector<Data>::Vector(MappableContainer<Data>&& container)
         }
         else // Caso in cui la nuova dimensione è maggiore di zero
         {
-            // Alloca un nuovo array di dimensione newSize, inizializzato a valori di default
+            // Alloco un nuovo array di dimensione newSize, inizializzato a valori di default
             Data* newElem = new Data[newSize] {};
 
-            // Calcola il numero minimo di elementi da copiare (tra vecchia e nuova dimensione)
+            // Calcolo il numero minimo di elementi da copiare (tra vecchia e nuova dimensione)
             ulong minSize = std::min(this->size, newSize);
 
-            // Copia i primi minSize elementi dal vecchio array al nuovo array
+            // Copio i primi minSize elementi dal vecchio array al nuovo array
             std::copy(this->elem, this->elem + minSize, newElem);
 
-            // Libera la memoria del vecchio array
+            // Libero la memoria del vecchio array
             delete[] this->elem;
 
-            // Aggiorna il puntatore al nuovo array
+            // Aggiorno il puntatore al nuovo array
             this->elem = newElem;
 
-            // Aggiorna la dimensione del vettore
+            // Aggiorno la dimensione del vettore
             this->size = newSize;
         }
     }

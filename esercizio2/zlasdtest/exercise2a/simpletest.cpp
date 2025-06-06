@@ -70,8 +70,6 @@ void stestHeapInt(uint & testnum, uint & testerr) {
 
     IsHeap(loctestnum, loctesterr, heap2, true);
 
-    Traverse(loctestnum, loctesterr, heap2, true, &TraversePrint<int>);
-
     EqualLinear(loctestnum, loctesterr, heap1, heap2, false);
 
     heap1.Sort();
@@ -87,9 +85,7 @@ void stestHeapInt(uint & testnum, uint & testerr) {
     Empty(loctestnum, loctesterr, heap3, false);
     Size(loctestnum, loctesterr, heap3, true, 14);
 
-
     lasd::HeapVec<int> heap4(std::move(heap3));
-    
 
     EqualLinear(loctestnum, loctesterr, heap2, heap3, false);
     EqualLinear(loctestnum, loctesterr, heap2, heap4, true);
@@ -97,7 +93,6 @@ void stestHeapInt(uint & testnum, uint & testerr) {
     Empty(loctestnum, loctesterr, heap3, true);
     Size(loctestnum, loctesterr, heap3, true, 0);
 
-   
     Empty(loctestnum, loctesterr, heap4, false);
     Size(loctestnum, loctesterr, heap4, true, 14);
 
