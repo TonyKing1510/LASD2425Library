@@ -200,8 +200,9 @@ lasd::Vector<Data>::Vector(MappableContainer<Data>&& container)
         {
             delete[] this->elem;
             this->elem = nullptr;
-            this->size = 0;
+            
         }
+        this->size = 0;
     }
 
     template <typename Data>

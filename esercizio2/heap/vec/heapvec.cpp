@@ -11,7 +11,7 @@ lasd::HeapVec<Data>::HeapVec(const TraversableContainer<Data>& container) : Sort
 
 template <typename Data>
 lasd::HeapVec<Data>::HeapVec(MappableContainer<Data>&& container) : SortableVector<Data>(std::move(container)) {
-  Heapify();  // Trasforma il vettore in un MaxHeap
+  Heapify();  
 }
 
 
@@ -39,10 +39,9 @@ lasd::HeapVec<Data>& lasd::HeapVec<Data>::operator=(const HeapVec<Data>& other) 
 
 template <typename Data>
 lasd::HeapVec<Data>& lasd::HeapVec<Data>::operator=(HeapVec<Data>&& other) {
-  if (this != &other) {
-    Vector<Data>::operator=(std::move(other)); // move base
-  }
-  return *this;
+        std::swap(this->elem, other.elem);
+        std::swap(size, other.size);
+        return *this;
 }
 
 

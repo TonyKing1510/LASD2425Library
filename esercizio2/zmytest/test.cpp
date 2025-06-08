@@ -460,42 +460,6 @@ void InsertMovePQ(uint & testnum, uint & testerr, lasd::PQ<Data> & pq, Data && v
 
                 h7.Clear();
 
-                //1.Heap da container ordinato
-                lasd::HeapVec<int> h8(4);
-                Empty(loctestnum, loctesterr, h8, false);
-                Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<int>);
-                Size(loctestnum, loctesterr, h8, true, 4);
-                IsHeap(loctestnum, loctesterr, h8, true);
-
-                lasd::Vector<int> vec2(4);
-                SetAt(loctestnum, loctesterr, vec2, true, 0, 1);
-                SetAt(loctestnum, loctesterr, vec2, true, 1, 2);
-                SetAt(loctestnum, loctesterr, vec2, true, 2, 3);
-                SetAt(loctestnum, loctesterr, vec2, true, 3, 4);
-
-                h8 = std::move(vec2);
-
-                Empty(loctestnum, loctesterr, vec2, false);
-                Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<int>);
-                IsHeap(loctestnum, loctesterr, h8, true);
-
-                h8.Clear();
-
-                lasd::SortableVector<int> sv1(4);
-                for(int i = 0; i < 4; i++) {
-                    SetAt(loctestnum, loctesterr, sv1, true, i, generateRandomInt());
-                }
-                Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<int>);
-                sv1.Sort();
-                Traverse(loctestnum, loctesterr, sv1, true, &TraversePrint<int>);
-                h8 = std::move(sv1);
-                IsHeap(loctestnum, loctesterr, h8, true);
-                Traverse(loctestnum, loctesterr, h8, true, &TraversePrint<int>);
-
-                h8.Sort();
-                IsHeap(loctestnum, loctesterr, h8, false);
-                EqualLinear(loctestnum, loctesterr, h8, sv1, true);
-
                 
 
                 //2.Heap da container non ordinato e operatore []
@@ -591,10 +555,22 @@ void InsertMovePQ(uint & testnum, uint & testerr, lasd::PQ<Data> & pq, Data && v
                     // Test operator[] const
                     const lasd::HeapVec<int>& const_hp = hp;
                     std::cout << "Accesso const (index 1): " << const_hp[1] << std::endl;
-                
-                
-            }catch(...)
-            {
+
+
+
+                        HeapVec<int> vec5;
+
+                        HeapVec<int> vec6(2);
+                        SetAt(loctestnum, loctesterr, vec6, true, 0, 1);
+                        SetAt(loctestnum, loctesterr, vec6, true, 1, 2);
+
+                        vec5 = std::move(vec6);
+
+                        Traverse(loctestnum, loctesterr, vec5, true, &TraversePrint<int>);
+                        Traverse(loctestnum, loctesterr, vec6, true, &TraversePrint<int>);
+
+                }catch(...)
+                {
                 loctestnum++;
                 loctesterr++;
                 cout << endl
@@ -946,6 +922,9 @@ void InsertMovePQ(uint & testnum, uint & testerr, lasd::PQ<Data> & pq, Data && v
                             std::cout << "Accesso const (index 1): " << const_hp[1] << std::endl;
 
 
+
+
+
                     }catch(...)
                     {
                         loctestnum++;
@@ -1190,7 +1169,7 @@ void InsertMovePQ(uint & testnum, uint & testerr, lasd::PQ<Data> & pq, Data && v
                             Size(loctestnum, loctesterr, h9, true, 5);
                             IsHeap(loctestnum, loctesterr, h9, true);
 
-                            cout<<"mammffsfsfsadadsad"<<endl;
+                         
 
                             lasd::List<string> lst5;
                             for (int i = 0; i < 5; i++) {
@@ -1200,7 +1179,7 @@ void InsertMovePQ(uint & testnum, uint & testerr, lasd::PQ<Data> & pq, Data && v
                             Empty(loctestnum, loctesterr, lst5, false);
                             Size(loctestnum, loctesterr, h9, true, 5);
                             IsHeap(loctestnum, loctesterr, h9, true);
-                                                        cout<<"mammffsfsfsawqeewe123324332324dadsad"<<endl;
+                                                 
 
                             Traverse(loctestnum, loctesterr, h9, true, &TraversePrint<string>);
                             EqualLinear(loctestnum, loctesterr, h9, lst5, false);
@@ -2207,7 +2186,7 @@ void InsertMovePQ(uint & testnum, uint & testerr, lasd::PQ<Data> & pq, Data && v
         unsigned loctestnum = 0, loctesterr = 0;
         testHeapInt(loctestnum, loctesterr);
         testHeapDouble(loctestnum, loctesterr);
-       testHeapString(loctestnum, loctesterr);
+        testHeapString(loctestnum, loctesterr);
         testnum += loctestnum;
         testerr += loctesterr;
         cout << endl

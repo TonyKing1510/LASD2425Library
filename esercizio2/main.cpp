@@ -16,6 +16,7 @@ int main() {
   std::cout << "**-----      (2) my test       -----**" << std::endl;
   std::cout << "Insersci il numero da scegliere "<<std::endl;
     int x;
+    
     std::cin>>x;
     switch(x){
         case 1:
